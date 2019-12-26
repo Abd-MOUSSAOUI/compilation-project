@@ -1,4 +1,3 @@
-
 #include "print_tree.h"
 
 #define MAX_HEIGHT 1000
