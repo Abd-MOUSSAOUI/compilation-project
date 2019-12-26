@@ -32,11 +32,59 @@ void ast_free(ast* ast) {
     case AST_ID:
       free(ast->id);
       break;
+    case AST_ASIGN:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_NEG:
+      ast_free(ast->left);
+      //ast_free(ast->right);
+      break;
+    case AST_INCR:
+      ast_free(ast->left);
+      //ast_free(ast->right);
+      break;
+    case AST_DECR:
+      ast_free(ast->left);
+      //ast_free(ast->right);
+      break;
+    case AST_EQ:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_NEQ:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_GT:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_GE:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_LT:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_LE:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
     case AST_ADD:
       ast_free(ast->left);
       ast_free(ast->right);
       break;
+    case AST_MIN:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
     case AST_MUL:
+      ast_free(ast->left);
+      ast_free(ast->right);
+      break;
+    case AST_DIV:
       ast_free(ast->left);
       ast_free(ast->right);
       break;
@@ -54,13 +102,73 @@ void ast_print(ast* ast, int indent) {
     case AST_NUMBER:
       printf("NUMBER (%d)\n", ast->number);
       break;
+    case AST_ASIGN:
+      printf("=\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_NEG:
+      printf("-(UN)\n");
+      ast_print(ast->left, indent + 1);
+      //ast_print(ast->right, indent + 1);
+      break;
+    case AST_INCR:
+      printf("++\n");
+      ast_print(ast->left, indent + 1);
+      //ast_print(ast->right, indent + 1);
+      break;
+    case AST_DECR:
+      printf("--\n");
+      ast_print(ast->left, indent + 1);
+      //ast_print(ast->right, indent + 1);
+      break;
+    case AST_EQ:
+      printf("==\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_NEQ:
+      printf("!=\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_GT:
+      printf(">\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_GE:
+      printf(">=\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_LT:
+      printf("<\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_LE:
+      printf("<=\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
     case AST_ADD:
       printf("+\n");
       ast_print(ast->left, indent + 1);
       ast_print(ast->right, indent + 1);
       break;
+    case AST_MIN:
+      printf("-\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
     case AST_MUL:
       printf("*\n");
+      ast_print(ast->left, indent + 1);
+      ast_print(ast->right, indent + 1);
+      break;
+    case AST_DIV:
+      printf("/\n");
       ast_print(ast->left, indent + 1);
       ast_print(ast->right, indent + 1);
   };
