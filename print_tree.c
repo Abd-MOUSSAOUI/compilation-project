@@ -182,6 +182,78 @@ asciinode * build_ascii_tree_recursive(ast *t)
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
+  if (t->type == AST_RET)
+  {
+    sprintf(node->label, "%s", " RETURN ");
+    node->lablen = strlen(node->label);
+    if(t->op.left != NULL)
+    {
+      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child->parent_dir = -1;
+    }
+  }
+  if (t->type == AST_FUNC)
+  {
+    sprintf(node->label, "%s", " FUNC ");
+    node->lablen = strlen(node->label);
+    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child->parent_dir = -1;
+    node->right_child->parent_dir = 1;
+  }
+  if (t->type == AST_BLOCK)
+  {
+    sprintf(node->label, "%s", " BLOCK ");
+    node->lablen = strlen(node->label);
+    if(t->op.left != NULL)
+    {
+      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child->parent_dir = -1;
+    }
+  }
+  if (t->type == AST_STMT)
+  {
+    sprintf(node->label, "%s", " STMT ");
+    node->lablen = strlen(node->label);
+    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child->parent_dir = -1;
+    if(t->op.right != NULL)
+    {
+      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child->parent_dir = 1;
+    }
+  }
+  if (t->type == AST_DECL)
+  {
+    sprintf(node->label, "%s", " DECLARATION ");
+    node->lablen = strlen(node->label);
+    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child->parent_dir = -1;
+    if(t->op.right != NULL)
+    {
+      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child->parent_dir = -1;
+    }
+  }
+  if (t->type == AST_IF)
+  {
+    sprintf(node->label, "%s", " IF ");
+    node->lablen = strlen(node->label);
+    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child->parent_dir = -1;
+    node->right_child->parent_dir = 1;
+  }
+  if (t->type == AST_WHILE)
+  {
+    sprintf(node->label, "%s", " WHILE ");
+    node->lablen = strlen(node->label);
+    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child->parent_dir = -1;
+    node->right_child->parent_dir = 1;
+  }
+  
   return node;
 }
 
