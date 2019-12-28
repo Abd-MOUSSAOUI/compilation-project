@@ -6,6 +6,6 @@
 #include <string.h>
 #include "ast.h"
 
-void gencode(ast *)
+void gencode(ast *);
 
 #endif

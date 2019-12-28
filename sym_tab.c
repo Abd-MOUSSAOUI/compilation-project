@@ -1,47 +1,120 @@
 #include "sym_tab.h"
 
-#define MAX_STR 26
 
-// Add New symbol 
-sym_tab* sym_add(sym_type type, sym_tab* tab, char *name)
+sym_tab* new_node() {
+  sym_tab* tab = malloc(sizeof(sym_tab));
+  tab->id = NULL;
+  tab->is_const = 0;
+  tab->is_set = 0;
+  tab->i_val = -1;
+  tab->next = NULL;
+  return tab;
+}
+
+sym_tab* new_node_func() {
+  sym_tab* tab = malloc(sizeof(sym_tab));
+  tab->id = NULL;
+  tab->is_const = 0;
+  tab->is_set = 0;
+  tab->i_val = -1;
+  tab->args = NULL;
+  tab->next = NULL;
+  return tab;
+}
+
+sym_tab* new_node_tab() {
+  sym_tab* tab = malloc(sizeof(sym_tab));
+  tab->id = NULL;
+  tab->is_const = 0;
+  tab->is_set = 0;
+  tab->i_val = -1;
+  tab->i_tab = NULL;
+  tab->next = NULL;
+  return tab;
+}
+
+sym_tab* sym_search(sym_tab* tab, char* id) 
 {
-	if (tab == NULL)
+  while (tab != NULL) 
+  {
+    if (strcmp(tab->id, id) == 0)
+      return tab;
+    tab = tab->next;
+  }
+  return NULL;
+}
+
+void sym_add(sym_type type, sym_tab **tab, char *name, int val, int is_const) 
+{
+    sym_tab* new = new_node();
+    new->id = strdup(name);
+
+    if(val >= 0)
+    {
+        new->is_set = 1;
+        new->i_val = val;
+    }
+    new->is_const = is_const;
+    new->next = NULL;
+    if (*tab == NULL)
 	{
-		tab = malloc(sizeof(struct sym_tab));
-        tab->type = type;
-		tab->id = strdup(name);
-		return tab;
+        *tab = new;
+        return;
 	}
 	else
 	{
-		sym_tab *parse = tab;
-		while (parse->next != NULL)
-			parse = parse->next;
-		parse->next = malloc(sizeof(struct sym_tab));
-		parse->next->id = strdup(name);
-		return parse->next;
+        sym_tab* last = *tab;
+		while(last->next != NULL)
+		    last = last->next;
+        last->next = new;
+        return;
 	}
 }
 
-// New temp
-sym_tab* sym_new(sym_tab* table)
+void sym_mod(sym_tab **tab, char* name, OPs op, int a)
 {
-	static int temporary_number = 0;
-	char temporary_name[MAX_STR];
-	snprintf(temporary_name, MAX_STR, "temp%d", temporary_number);
-	temporary_number++;
-	return sym_add(INT ,table, temporary_name);
-}
-
-sym_tab* sym_search(sym_tab *tab, char *name)
-{
-	while (tab != NULL)
+    sym_tab* last = *tab;
+    while (last != NULL)
 	{
-		if (strcmp(tab->id, name) == 0)
-			return tab;
-		tab = tab->next;
+		if (strcmp(last->id, name) == 0)
+        {
+            if((last->type == INT_S) && (last->is_const == 0))
+            {
+                if(op == AS_VAL)
+                {
+                    last->i_val = a;
+                    return;
+                }
+                if(last->is_set == 1)
+                {
+                    if(op == INCR_VAL) 
+                    {
+                        last->i_val = last->i_val + a;
+                        return;
+                    } 
+                    else if(op == DECR_VAL)
+                    {
+                        last->i_val = last->i_val - a;
+                        return;
+                    } 
+                    else
+                    {
+                        fprintf(stderr, "ERROR: %s is not initialized\n", name);
+                        exit(1);
+                    }
+                }
+               
+            }
+            else
+            {
+                fprintf(stderr, "Error: %s is a const value !\n", name);
+                exit(1);
+            }
+        }
+		last = last->next;
 	}
-	return NULL;
+    fprintf(stderr, "ERROR: %s is not declared\n", name);
+    exit(1);    
 }
 
 void sym_free(sym_tab *tab)
@@ -57,9 +130,6 @@ void sym_free(sym_tab *tab)
             case TAB_INT:
                 free(tab->i_tab);
                 break;
-            case TAB_FLOAT:
-                free(tab->f_tab);
-                break;
             default:
                 break;
         }
@@ -67,29 +137,22 @@ void sym_free(sym_tab *tab)
     }
 }
 
-void symbol_print(sym_tab *tab)
+void sym_print(sym_tab *tab)
 {
 	while (tab != NULL)
 	{
-		printf("id : %10s : ", tab->id);
-        printf("type : %u : ", tab->type);
-		(tab->is_set) ? printf("is_set") : printf("is not set");
-        (tab->is_const) ? printf("is const") : printf("is not const");
+		printf("id: %s\t", tab->id);
+        printf("type: INT\t");
+        (tab->is_const) ? printf("is const\t") : printf("");
 		switch(tab->type){
-            case INT:
-                printf("val = %d", tab->i_val);
-                break;
-            case FLOAT:
-                printf("val = %f", tab->f_val);
+            case INT_S:
+                printf("val = %d\n", tab->i_val);
                 break;
             case FUNC:
-                printf("args = %s", tab->args);
+                printf("args = %s\n", tab->args);
                 break;
             case TAB_INT:
-                printf("int tab");
-                break;
-            case TAB_FLOAT:
-                printf("float tab");
+                printf("tab \n");
         }
 		tab = tab->next;
 	}

@@ -9,14 +9,23 @@
 
 identifier            [a-zA-Z_]+[0-9a-zA-Z_]*
 number                ([0-9]|([1-9][0-9]*))
+main                  "main"[ ]*"()"
 
 %%
+
+"if"                  { return IF; }
+"else"                { return ELSE; }
+"for"                 { return FOR; }
+"while"               { return WHILE; }
+"int"                 { return INT; }
+"return"              { return RET; }
+{main}                { yylval.string = "main"; return MAIN; }
+
 
 {identifier}          { yylval.string = strdup(yytext); return ID; }
 {number}              { yylval.value = atoi(yytext); return NUMBER; }
 
-[-+*/=(){}<>,;]     { return *yytext; }
-
+[-+*/=(){}<>,;]       { return *yytext; }
 
 "++"                  { return INCR; }
 "--"                  { return DECR; }
@@ -29,8 +38,8 @@ number                ([0-9]|([1-9][0-9]*))
 "&&"                  { return AND; }
 "!"                   { return NOT; }
 
-
-[\n]                  { return yytext[0]; }
+\n|\t|\r              { }
+[ ]                   { }
 .                     { printf("Caractere inconnu: %s", yytext); }
 
 %%
