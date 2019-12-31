@@ -1,3 +1,3 @@
-int my_func () {}
-
-int main(int argc, int argv) { }
+int main(int argc, int argv) {
+    int a[3][5][7];
+ }

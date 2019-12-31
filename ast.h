@@ -11,6 +11,7 @@ typedef enum ast_type {
     AST_DECL,
     AST_ID,
     AST_NUMBER,
+    AST_DIM,
     AST_ARRAY,
     AST_ASIGN,
     AST_NEG,

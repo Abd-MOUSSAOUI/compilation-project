@@ -58,6 +58,10 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
+      case AST_DIM:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
       case AST_PARAML:
         ast_free(ast->op.left);
         ast_free(ast->op.right);
@@ -196,6 +200,11 @@ void ast_print(ast* ast, int indent) {
       break;
     case AST_ARRAY:
       printf("ARRAY_ACCESS\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_DIM:
+      printf("DIM\n");
       ast_print(ast->op.left, indent + 1);
       ast_print(ast->op.right, indent + 1);
       break;
