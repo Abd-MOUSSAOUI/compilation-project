@@ -1,9 +1,3 @@
-int main()
-{
-    int a = 13;
-    while(a > 0)
-    {
-        a--;
-    }
-    return a;
-}
+int my_func () {}
+
+int main(int argc, int argv) { }

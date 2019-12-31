@@ -45,11 +45,22 @@ ast* ast_new_id(char* id) {
 }
 
 void ast_free(ast* ast) {
+  if(!ast)
+    return;
+
   switch (ast->type) {
       case AST_NUMBER:
         break;
       case AST_ID:
         free(ast->id);
+        break;
+      case AST_ARRAY:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_PARAML:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
         break;
       case AST_FOR:
         ast_free(ast->op.left);
@@ -61,15 +72,19 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
+      case AST_PROG:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
       case AST_IF_ELSE:
         ast_free(ast->op.left);
         ast_free(ast->op.mid_l);
         ast_free(ast->op.mid_r);
         break;
-    case AST_IF:
-      ast_free(ast->op.left);
-      ast_free(ast->op.mid_l);
-      break;
+      case AST_IF:
+        ast_free(ast->op.left);
+        ast_free(ast->op.mid_l);
+        break;
       case AST_ASIGN:
         ast_free(ast->op.left);
         ast_free(ast->op.right);
@@ -78,33 +93,39 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
-      case AST_STMT:
-        free(ast->op.left);
+      case AST_ARG:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_CALL:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_STMTL:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_EXPST:
+        ast_free(ast->op.left);
         break;
       case AST_RET:
-        if(ast->op.left != 0)
-          ast_free(ast->op.left);
+        ast_free(ast->op.left);
         break;
       case AST_DECL:
-        if(ast->op.right != 0)
-          ast_free(ast->op.right);
+        ast_free(ast->op.right);
         ast_free(ast->op.left);
         break;
       case AST_BLOCK:
-        if(ast->op.left != 0)
-          ast_free(ast->op.left);
+        ast_free(ast->op.left);
         break;
       case AST_NEG:
         ast_free(ast->op.left);
-        //ast_free(ast->right);
         break;
       case AST_INCR:
         ast_free(ast->op.left);
-        //ast_free(ast->right);
         break;
       case AST_DECR:
         ast_free(ast->op.left);
-        //ast_free(ast->right);
         break;
       case AST_EQ:
         ast_free(ast->op.left);
@@ -130,6 +151,17 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
+      case AST_OR:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_AND:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_NOT:
+        ast_free(ast->op.left);
+        break;
       case AST_ADD:
         ast_free(ast->op.left);
         ast_free(ast->op.right);
@@ -150,6 +182,9 @@ void ast_free(ast* ast) {
 }
 
 void ast_print(ast* ast, int indent) {
+  if(!ast)
+    return;
+
   for (int i = 0; i < indent; i++)
     printf("    ");
   switch(ast->type) {
@@ -159,43 +194,66 @@ void ast_print(ast* ast, int indent) {
     case AST_NUMBER:
       printf("NUMBER (%d)\n", ast->number);
       break;
+    case AST_ARRAY:
+      printf("ARRAY_ACCESS\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_PARAML:
+      printf("PARAM_L\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_PROG:
+      printf("PROG\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
     case AST_ASIGN:
       printf("=\n");
       ast_print(ast->op.left, indent + 1);
       ast_print(ast->op.right, indent + 1);
       break;
-    case AST_STMT:
+    case AST_STMTL:
       printf("STMT\n");
       ast_print(ast->op.left, indent + 1);
-      if(ast->op.right != 0)
-        ast_print(ast->op.right, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_EXPST:
+      printf("EXPST\n");
+      ast_print(ast->op.left, indent + 1);
       break;
     case AST_RET:
       printf("RET\n");
-      if(ast->op.left != 0)
-        ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.left, indent + 1);
       break;
     case AST_DECL:
       printf("DECL\n");
-      if(ast->op.left != 0)
-        ast_print(ast->op.left, indent + 1);
-      if(ast->op.right != 0)
-        ast_print(ast->op.right, indent + 1);
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
       break;
     case AST_BLOCK:
       printf("BLOCK\n");
-      if(ast->op.left != 0)
-        ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.left, indent + 1);
       break;
     case AST_FUNC:
       printf("FUNC\n");
       ast_print(ast->op.left, indent + 1);
       ast_print(ast->op.right, indent + 1);
       break;
+    case AST_CALL:
+      printf("CALL\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_ARG:
+      printf("CALL\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
     case AST_NEG:
       printf("-(UN)\n");
       ast_print(ast->op.left, indent + 1);
-      //ast_print(ast->right, indent + 1);
       break;
     case AST_FOR:
       printf("FOR\n");
@@ -223,12 +281,14 @@ void ast_print(ast* ast, int indent) {
     case AST_INCR:
       printf("++\n");
       ast_print(ast->op.left, indent + 1);
-      //ast_print(ast->right, indent + 1);
       break;
     case AST_DECR:
       printf("--\n");
       ast_print(ast->op.left, indent + 1);
-      //ast_print(ast->right, indent + 1);
+      break;
+    case AST_NOT:
+      printf("!\n");
+      ast_print(ast->op.left, indent + 1);
       break;
     case AST_EQ:
       printf("==\n");
@@ -257,6 +317,16 @@ void ast_print(ast* ast, int indent) {
       break;
     case AST_LE:
       printf("<=\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_OR:
+      printf("||\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_AND:
+      printf("&&\n");
       ast_print(ast->op.left, indent + 1);
       ast_print(ast->op.right, indent + 1);
       break;

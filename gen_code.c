@@ -2,19 +2,26 @@
 
 void gencode(ast* ast)
 {
-    switch(ast->type) 
+    switch(ast->type)
     {
         case AST_ID:
             printf("%s", ast->id);
             break;
         case AST_NUMBER:
-            printf("%d ", ast->number);
+            printf("%d", ast->number);
+            break;
+        case AST_ARRAY:
+            printf("%s",ast->op.left->id);
+            if(ast->op.right) {
+              printf("[");
+              gencode(ast->op.right);
+              printf("]");
+            }
             break;
         case AST_ASIGN:
             gencode(ast->op.left);
             printf(" = ");
             gencode(ast->op.right);
-            printf(";");
             break;
         case AST_NEG:
             printf("-");
@@ -26,16 +33,20 @@ void gencode(ast* ast)
             break;
         case AST_DECR:
             gencode(ast->op.left);
-            printf("-- ");
+            printf("--");
+            break;
+        case AST_NOT:
+            printf("!");
+            gencode(ast->op.left);
             break;
         case AST_EQ:
             gencode(ast->op.left);
-            printf("== ");
+            printf(" == ");
             gencode(ast->op.right);
             break;
         case AST_NEQ:
             gencode(ast->op.left);
-            printf("!= ");
+            printf(" != ");
             gencode(ast->op.right);
             break;
         case AST_GT:
@@ -56,6 +67,16 @@ void gencode(ast* ast)
         case AST_LE:
             gencode(ast->op.left);
             printf(" <= ");
+            gencode(ast->op.right);
+            break;
+        case AST_OR:
+            gencode(ast->op.left);
+            printf(" || ");
+            gencode(ast->op.right);
+            break;
+        case AST_AND:
+            gencode(ast->op.left);
+            printf(" && ");
             gencode(ast->op.right);
             break;
         case AST_ADD:
@@ -81,49 +102,73 @@ void gencode(ast* ast)
         case AST_DECL:
             printf("int ");
             gencode(ast->op.left);
-            if(ast->op.right != NULL)
+            if(ast->op.right)
             {
-                printf("= ");
+                printf(" = ");
                 gencode(ast->op.right);
             }
             printf(";\n");
             break;
-        case AST_STMT:
+        case AST_ARG:
             gencode(ast->op.left);
-            if(ast->op.right != NULL)
-            {
-                gencode(ast->op.right);
+            if(ast->op.right) {
+              printf(", ");
+              gencode(ast->op.right);
             }
-            else
-                printf("\n");
+            break;
+        case AST_PARAML:
+            printf("int ");
+            gencode(ast->op.left);
+            if(ast->op.right) {
+              printf(", ");
+              gencode(ast->op.right);
+            }
+            break;
+        case AST_STMTL:
+            gencode(ast->op.left);
+            if(ast->op.right)
+                gencode(ast->op.right);
             break;
         case AST_BLOCK:
-            printf(" {\n");
-            if(ast->op.left != NULL)
-            {
-                printf(" ");
+            printf("{\n");
+            if(ast->op.left)
                 gencode(ast->op.left);
-            } 
-            printf("\n }\n");
+            printf("\n}\n");
             break;
         case AST_FUNC:
             printf("int ");
             gencode(ast->op.left);
-            printf("()");
-            gencode(ast->op.right);
+            printf("(");
+            if(ast->op.mid_l)
+              gencode(ast->op.mid_l);
+            printf(") ");
+            gencode(ast->op.mid_r);
+            printf("\n");
+            break;
+        case AST_EXPST:
+            if(ast->op.left) {
+                gencode(ast->op.left);
+                printf(";\n");
+            }
             break;
         case AST_RET:
-            printf(" return ");
-            if(ast->op.left != NULL)
+            printf("return ");
+            if(ast->op.left)
                 gencode(ast->op.left);
             printf(";");
+            break;
+        case AST_CALL:
+            gencode(ast->op.left);
+            printf("(");
+            if(ast->op.right)
+                gencode(ast->op.right);
+            printf(")");
             break;
         case AST_IF:
             printf("if (");
             gencode(ast->op.left);
             printf(")\n");
             gencode(ast->op.mid_l);
-            printf("\n");
             break;
         case AST_IF_ELSE:
             printf("if (");
@@ -132,7 +177,6 @@ void gencode(ast* ast)
             gencode(ast->op.mid_l);
             printf(" else \n");
             gencode(ast->op.mid_r);
-            printf("\n");
             break;
         case AST_FOR:
             printf("for (");
@@ -144,11 +188,14 @@ void gencode(ast* ast)
             gencode(ast->op.right);
             break;
         case AST_WHILE:
-            printf(" while (");
+            printf("while (");
             gencode(ast->op.left);
             printf(")\n");
             gencode(ast->op.right);
             break;
-
+        case AST_PROG:
+            gencode(ast->op.left);
+            gencode(ast->op.right);
+            break;
   };
 }

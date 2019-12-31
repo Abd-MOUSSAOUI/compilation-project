@@ -33,9 +33,9 @@ sym_tab* new_node_tab() {
   return tab;
 }
 
-sym_tab* sym_search(sym_tab* tab, char* id) 
+sym_tab* sym_search(sym_tab* tab, char* id)
 {
-  while (tab != NULL) 
+  while (tab != NULL)
   {
     if (strcmp(tab->id, id) == 0)
       return tab;
@@ -44,7 +44,7 @@ sym_tab* sym_search(sym_tab* tab, char* id)
   return NULL;
 }
 
-void sym_add(sym_type type, sym_tab **tab, char *name, int val, int is_const) 
+void sym_add(sym_type type, sym_tab **tab, char *name, int val, int is_const)
 {
     sym_tab* new = new_node();
     new->id = strdup(name);
@@ -83,27 +83,28 @@ void sym_mod(sym_tab **tab, char* name, OPs op, int a)
                 if(op == AS_VAL)
                 {
                     last->i_val = a;
+                    last->is_set = 1;
                     return;
                 }
                 if(last->is_set == 1)
                 {
-                    if(op == INCR_VAL) 
+                    if(op == INCR_VAL)
                     {
                         last->i_val = last->i_val + a;
                         return;
-                    } 
+                    }
                     else if(op == DECR_VAL)
                     {
                         last->i_val = last->i_val - a;
                         return;
-                    } 
+                    }
                     else
                     {
                         fprintf(stderr, "ERROR: %s is not initialized\n", name);
                         exit(1);
                     }
                 }
-               
+
             }
             else
             {
@@ -114,7 +115,7 @@ void sym_mod(sym_tab **tab, char* name, OPs op, int a)
 		last = last->next;
 	}
     fprintf(stderr, "ERROR: %s is not declared\n", name);
-    exit(1);    
+    exit(1);
 }
 
 void sym_free(sym_tab *tab)
@@ -122,7 +123,7 @@ void sym_free(sym_tab *tab)
     while(tab != NULL)
     {
         free(tab->id);
-        switch (tab->type) 
+        switch (tab->type)
         {
             case FUNC:
                 free(tab->args);

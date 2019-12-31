@@ -211,9 +211,9 @@ asciinode * build_ascii_tree_recursive(ast *t)
       node->left_child->parent_dir = -1;
     }
   }
-  if (t->type == AST_STMT)
+  if (t->type == AST_STMTL)
   {
-    sprintf(node->label, "%s", " STMT ");
+    sprintf(node->label, "%s", " STMTL ");
     node->lablen = strlen(node->label);
     node->left_child = build_ascii_tree_recursive(t->op.left);
     node->left_child->parent_dir = -1;
@@ -253,7 +253,7 @@ asciinode * build_ascii_tree_recursive(ast *t)
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
-  
+
   return node;
 }
 

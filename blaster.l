@@ -7,8 +7,9 @@
 %option nounput
 %option noyywrap
 
-identifier            [a-zA-Z_]+[0-9a-zA-Z_]*
+identifier            [a-zA-Z_][0-9a-zA-Z_]*
 number                ([0-9]|([1-9][0-9]*))
+array_id              [a-zA-Z][0-9a-zA-Z]*("["[^ =;,]"]" )+
 main                  "main"[ ]*"()"
 
 %%
@@ -18,14 +19,14 @@ main                  "main"[ ]*"()"
 "for"                 { return FOR; }
 "while"               { return WHILE; }
 "int"                 { return INT; }
+"void"                { return VOID; }
 "return"              { return RET; }
-{main}                { yylval.string = "main"; return MAIN; }
 
 
 {identifier}          { yylval.string = strdup(yytext); return ID; }
 {number}              { yylval.value = atoi(yytext); return NUMBER; }
 
-[-+*/=(){}<>,;]       { return *yytext; }
+[-+*/=(){}<>,;\[\]]       { return *yytext; }
 
 "++"                  { return INCR; }
 "--"                  { return DECR; }
