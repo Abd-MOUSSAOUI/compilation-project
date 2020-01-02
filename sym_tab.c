@@ -41,7 +41,7 @@ sym_tab* sym_search(sym_tab* tab,sym_type type, char* id)
                 {
                     return tab;
                 }
-        } 
+        }
         if(type == INT_F || type == FUNC)
         {
             if((strcmp(tab->id, id) == 0) && tab->type == type)
@@ -79,7 +79,7 @@ void sym_add_var(sym_type type, sym_tab **tab, char *name, int val, int is_const
 	}
 }
 
-void sym_add_func(sym_type type, retour_type r_type, sym_tab **tab, char *name, int nb_args)
+void sym_add_func(sym_type type, retour_type r_type, sym_tab **tab, char *name, int nb_args, int is_const)
 {
     sym_tab* new = new_node_func();
     new->id = strdup(name);
@@ -87,7 +87,7 @@ void sym_add_func(sym_type type, retour_type r_type, sym_tab **tab, char *name, 
     new->r_type = r_type;
     new->args = nb_args;
     new->is_set = 1;
-    new->is_const = 0;
+    new->is_const = is_const;
     new->next = NULL;
     if (*tab == NULL)
 	{
@@ -104,14 +104,14 @@ void sym_add_func(sym_type type, retour_type r_type, sym_tab **tab, char *name, 
 	}
 }
 
-void sym_add_tab(sym_type type, sym_tab **tab, char *name, int dim)
+void sym_add_tab(sym_type type, sym_tab **tab, char *name, int dim, int is_const)
 {
     sym_tab* new = new_node_tab();
     new->id = strdup(name);
     new->type = type;
     new->dim = dim;
     new->is_set = 0;
-    new->is_const = 0;
+    new->is_const = is_const;
     new->next = NULL;
     if (*tab == NULL)
 	{

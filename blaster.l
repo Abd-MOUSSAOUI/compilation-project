@@ -20,6 +20,7 @@ main                  "main"[ ]*"()"
 "while"               { return WHILE; }
 "int"                 { return INT; }
 "void"                { return VOID; }
+"const"               { return CONST; }
 "return"              { return RET; }
 
 
