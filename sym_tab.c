@@ -150,7 +150,13 @@ void sym_mod(sym_tab **tab, char* name, OPs op, int a)
 	{
 		if (strcmp(last->id, name) == 0)
         {
-            if(((last->type == INT_V) || (last->type == INT_F)) && (last->is_const == 0))
+          if(last->is_const)
+            {
+                fprintf(stderr, "Error: %s is a const value !\n", name);
+                exit(1);
+            }
+
+            if(((last->type == INT_V) || (last->type == INT_F)))
             {
                 if(op == AS_VAL)
                 {
@@ -177,11 +183,6 @@ void sym_mod(sym_tab **tab, char* name, OPs op, int a)
                     }
                 }
 
-            }
-            else
-            {
-                fprintf(stderr, "Error: %s is a const value !\n", name);
-                exit(1);
             }
         }
 		last = last->next;
