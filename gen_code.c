@@ -116,9 +116,19 @@ void gencode(ast* ast)
             }
             printf(";\n");
             break;
+        case AST_ARR_DECL:
+            printf("int ");
+            gencode(ast->op.left);
+            if(ast->op.right) {
+              gencode(ast->op.right);
+            } else {
+              printf("[]");
+            }
+            printf(";\n");
+            break;
         case AST_ARG:
             gencode(ast->op.left);
-            if(ast->op.right) 
+            if(ast->op.right)
             {
                 printf(", ");
                 gencode(ast->op.right);
@@ -130,10 +140,10 @@ void gencode(ast* ast)
             {
                 gencode(ast->op.left);
             }
-            if(ast->op.right) 
+            if(ast->op.right)
             {
                 printf(", ");
-                if(ast->op.right->type == AST_ID)   
+                if(ast->op.right->type == AST_ID)
                     printf("int ");
                 gencode(ast->op.right);
             }

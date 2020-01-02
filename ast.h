@@ -9,6 +9,7 @@ typedef enum ast_type {
     AST_ARG,
     AST_PARAML,
     AST_DECL,
+    AST_ARR_DECL,
     AST_ID,
     AST_NUMBER,
     AST_DIM,
