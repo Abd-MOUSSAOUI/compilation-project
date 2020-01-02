@@ -250,7 +250,7 @@ asciinode * build_ascii_tree_recursive(ast *t)
     sprintf(node->label, "%s", " IF ");
     node->lablen = strlen(node->label);
     node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->right_child = build_ascii_tree_recursive(t->op.mid_l);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
