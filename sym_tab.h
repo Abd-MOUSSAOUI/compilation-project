@@ -12,7 +12,7 @@ typedef enum retour_type { VOID_T, INT_T } retour_type;
 typedef enum OPs { INCR_VAL, DECR_VAL, AS_VAL } OPs;
 
 
-typedef struct sym_tab 
+typedef struct sym_tab
 {
     sym_type type;
 	char *id;
@@ -33,8 +33,8 @@ sym_tab* new_node_tab();
 sym_tab* new_node_func();
 sym_tab* sym_search(sym_tab*, sym_type, char*);
 void sym_add_var(sym_type, sym_tab **, char *, int, int);
-void sym_add_func(sym_type, retour_type, sym_tab **, char *, int);
-void sym_add_tab(sym_type, sym_tab **, char *, int);
+void sym_add_func(sym_type, retour_type, sym_tab **, char *, int, int);
+void sym_add_tab(sym_type, sym_tab **, char *, int, int);
 void sym_free(sym_tab *);
 void sym_print(sym_tab *);
 void sym_mod(sym_tab **, char*, OPs, int);

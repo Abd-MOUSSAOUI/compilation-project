@@ -10,12 +10,23 @@ void gencode(ast* ast)
         case AST_NUMBER:
             printf("%d", ast->number);
             break;
+        case AST_CONST:
+            printf("const ");
+            gencode(ast->op.left);
+            break;
         case AST_DIM:
             printf("[");
             gencode(ast->op.left);
             printf("]");
             if(ast->op.right)
               gencode(ast->op.right);
+            break;
+        case AST_ARR_ARG:
+            gencode(ast->op.left);
+            if(ast->op.right) {
+              printf(" ,");
+              gencode(ast->op.right);
+            }
             break;
         case AST_ARRAY:
             gencode(ast->op.left);
@@ -119,10 +130,15 @@ void gencode(ast* ast)
         case AST_ARR_DECL:
             printf("int ");
             gencode(ast->op.left);
-            if(ast->op.right) {
-              gencode(ast->op.right);
+            if(ast->op.mid_l) {
+              gencode(ast->op.mid_l);
             } else {
               printf("[]");
+            }
+            if(ast->op.mid_r) {
+              printf(" = {");
+              gencode(ast->op.mid_r);
+              printf("}");
             }
             printf(";\n");
             break;
@@ -136,10 +152,7 @@ void gencode(ast* ast)
             break;
         case AST_PARAML:
             printf("int ");
-            if(ast->op.left)
-            {
-                gencode(ast->op.left);
-            }
+            gencode(ast->op.left);
             if(ast->op.right)
             {
                 printf(", ");
