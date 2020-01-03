@@ -356,6 +356,21 @@ asciinode * build_ascii_tree_recursive(ast *t)
       node->left_child->parent_dir = -1;
     }
   }
+  if (t->type == AST_DIM)
+  {
+    sprintf(node->label, "%s", " DIM ");
+    node->lablen = strlen(node->label);
+    if(t->op.left != NULL)
+    {
+      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child->parent_dir = -1;
+    }
+    if(t->op.right != NULL)
+    {
+      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child->parent_dir = -1;
+    }
+  }
   if (t->type == AST_CALL)
   {
     sprintf(node->label, "%s", " FUNC_CALL ");
