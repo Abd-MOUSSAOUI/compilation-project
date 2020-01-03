@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "sym_tab.h"
 
-void gencode(ast *);
+
+void gencode(ast *,sym_tab *);
 
 #endif

@@ -8,7 +8,6 @@
 
 #define MAX_STR 42
 typedef enum sym_type { INT_V,INT_F, FUNC, TAB_INT } sym_type;
-typedef enum retour_type { INT_T, VOID_T } retour_type;
 typedef enum OPs { INCR_VAL, DECR_VAL, AS_VAL } OPs;
 
 
@@ -19,12 +18,10 @@ typedef struct sym_tab
 	int is_const; //1 true 0 false
 	int is_set; //1 true 0 false
 	int num_f;
-	union {
-		retour_type r_type;
-		int i_val; //-1 default val
-		int args;
-		int dim;
-	};
+	int r_type; //0 int, 1 void
+	int i_val; //-1 default val
+	int args;
+	int dim;
 	struct sym_tab *next;
 } sym_tab;
 
@@ -32,9 +29,9 @@ typedef struct sym_tab
 sym_tab* new_node();
 sym_tab* new_node_tab();
 sym_tab* new_node_func();
-sym_tab* sym_search(sym_tab*, sym_type, char*,int);
+sym_tab* sym_search(sym_tab*, sym_type, char*, int);
 void sym_add_var(sym_type, sym_tab **, char *, int, int, int, int);
-void sym_add_func(sym_type, retour_type, sym_tab **, char *, int, int, int);
+void sym_add_func(sym_type, int, sym_tab **, char *, int, int, int);
 void sym_add_tab(sym_type, sym_tab **, char *, int, int,int);
 void sym_free(sym_tab *);
 void sym_print(sym_tab *);
