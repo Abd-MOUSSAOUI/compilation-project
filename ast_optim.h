@@ -7,6 +7,5 @@
 #include "ast.h"
 
 ast* ast_divide(ast*);
-void ast_set(ast*, ast*);
-
+int ast_compare(ast*, ast*);
 #endif

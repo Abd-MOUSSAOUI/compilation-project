@@ -3,7 +3,7 @@
   #include <string.h>
   #include "y.tab.h"
 
-  int cmnt_strt = 0;
+  int end = 0;
 %}
 
 %option nounput
@@ -49,6 +49,16 @@ comment               (\/\/.*)|("/*"([^*]|\*+[^*/])*\*+"/")
 
 \n|\t|\r              { }
 [ ]                   { }
+
+<<EOF>>               { if(end)
+                          yyterminate();
+
+                        yyin = fopen("blast.c", "r");
+                        yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+                        end++;
+                        BEGIN(INITIAL);
+                      }
+
 .                     { printf("Caractere inconnu: %s", yytext); }
 
 %%

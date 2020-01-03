@@ -241,7 +241,7 @@ void gencode(ast* ast, sym_tab* tab)
             break;
         case AST_PROG:
             gencode(ast->op.left,tab);
-            if(ast->op.right,tab)
+            if(ast->op.right)
                 gencode(ast->op.right,tab);
             break;
   };

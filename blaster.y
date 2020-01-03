@@ -4,6 +4,7 @@
   #include "ast.h"
   #include "sym_tab.h"
   #include "gen_code.h"
+  #include "ast_optim.h"
   #include "print_tree.h"
 
   int yylex();
@@ -13,6 +14,7 @@
   void lex_free();
   struct sym_tab* symbol_tab = NULL;
   struct ast* parser_ast = NULL;
+  struct ast* blast_ast = NULL;
 %}
 
 %union {
@@ -54,7 +56,7 @@ func_decl:
                                             exit(1);
                                          }
                                          $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5);
-                                         sym_add_func(FUNC, INT_T, &symbol_tab, $2, 0, 0, num_func);
+                                         sym_add_func(FUNC, 0, &symbol_tab, $2, 0, 0, num_func);
                                          num_func++;
                                        }
   | VOID ID '(' ')' block              { $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5);
@@ -65,7 +67,7 @@ func_decl:
                                          }
                                          else
                                          {
-                                            sym_add_func(FUNC, VOID_T, &symbol_tab, $2, 0, 0, num_func);
+                                            sym_add_func(FUNC, 1, &symbol_tab, $2, 0, 0, num_func);
                                             num_func++;
                                          }
                                        }
@@ -77,7 +79,7 @@ func_decl:
                                          else
                                          {
                                           $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), $4, $6);
-                                          sym_add_func(FUNC, INT_T, &symbol_tab, $2, nb_args, 0, num_func);
+                                          sym_add_func(FUNC, 0, &symbol_tab, $2, nb_args, 0, num_func);
                                           num_func++; nb_args = 0;
                                          }
                                     }
@@ -89,7 +91,7 @@ func_decl:
                                       }
                                       else
                                       {
-                                        sym_add_func(FUNC, VOID_T, &symbol_tab, $2, nb_args, 0,num_func);
+                                        sym_add_func(FUNC, 1, &symbol_tab, $2, nb_args, 0,num_func);
                                         num_func++; nb_args = 0;
                                       }
                                     }
@@ -123,7 +125,7 @@ param:
                               sym_add_var(INT_F, &symbol_tab, $2, -1, 0, num_func, 1);
                             }
                          }
-  | INT ID dim           {  $$ = ast_new_operation(AST_PARAML, ast_new_operation(AST_ARRAY, ast_new_id($2), $3), 0); 
+  | INT ID dim           {  $$ = ast_new_operation(AST_PARAML, ast_new_operation(AST_ARRAY, ast_new_id($2), $3), 0);
                             if (sym_search(symbol_tab, INT_F, $2, num_func) != NULL)
                             {
                                 fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
@@ -135,7 +137,7 @@ param:
                               sym_add_var(INT_F, &symbol_tab, $2, -1, 0, num_func, 1);
                             }
                          }
-  | INT ID empty_dim     {  $$ = ast_new_operation(AST_PARAML, ast_new_operation(AST_ARRAY, ast_new_id($2), $3), 0); 
+  | INT ID empty_dim     {  $$ = ast_new_operation(AST_PARAML, ast_new_operation(AST_ARRAY, ast_new_id($2), $3), 0);
                             if (sym_search(symbol_tab, INT_F, $2, num_func) != NULL)
                             {
                                 fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
@@ -400,17 +402,28 @@ int main(int argc, char** argv) {
 
   yyin = input;
 
-  if (yyparse() == 0)
-  //  ast_print(parser_ast, 0);
-  print_ascii_tree(parser_ast);
-  sym_print(symbol_tab);
-  printf("\n\n");
-  gencode(parser_ast);
+  if (yyparse() == 0) {
+    ast* tmp  = ast_divide(parser_ast);
+    blast_ast = tmp->op.right;
+    tmp->op.right = 0;
+
+    print_ascii_tree(parser_ast);
+    printf("\n\n\n");
+    print_ascii_tree(blast_ast);
+    //sym_print(symbol_tab);
+    printf("\n\n");
+    gencode(parser_ast, symbol_tab);
+    printf("\n\n\n");
+    printf("\n\n\n");
+    gencode(blast_ast, symbol_tab);
+  }
+
   fclose(input);
 
   // Be clean.
   lex_free();
   ast_free(parser_ast);
+  ast_free(blast_ast);
   sym_free(symbol_tab);
   return 0;
 }
