@@ -7,7 +7,7 @@
   #include "print_tree.h"
 
   int yylex();
-  int counter = 0, dim = 0, is_const = 0;
+  int counter = 0, dim = 0;
   FILE* yyin;
   void yyerror(char*);
   void lex_free();
@@ -48,21 +48,13 @@ external_decl:
   ;
 
 func_decl:
-    d_type ID '(' ')' block            { if (sym_search(symbol_tab,FUNC, $2) != NULL)
+    INT ID '(' ')' block            { if (sym_search(symbol_tab,FUNC, $2) != NULL)
                                          {
                                             fprintf(stderr, "ERROR: %s function allready exist\n", $2);
                                             exit(1);
                                          }
-
-                                         if(is_const)
-                                         {
-                                            is_const = 0;
-                                            $$ = ast_new_operation(AST_CONST, ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5), 0);
-                                            sym_add_func(FUNC, INT_T, &symbol_tab, $2, 0, 1);
-                                         } else {
-                                            $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5);
-                                            sym_add_func(FUNC, INT_T, &symbol_tab, $2, 0, 0);
-                                         }
+                                         $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5);
+                                         sym_add_func(FUNC, INT_T, &symbol_tab, $2, 0, 0);
                                        }
   | VOID ID '(' ')' block              { $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), 0, $5);
                                          if (sym_search(symbol_tab,FUNC, $2) != NULL)
@@ -75,7 +67,7 @@ func_decl:
                                             sym_add_func(FUNC, VOID_T, &symbol_tab, $2, 0, 0);
                                          }
                                        }
-  | d_type ID '(' param_l ')' block    { if (sym_search(symbol_tab, FUNC, $2) != NULL)
+  | INT ID '(' param_l ')' block    { if (sym_search(symbol_tab, FUNC, $2) != NULL)
                                          {
                                             fprintf(stderr, "ERROR: %s function allready exist\n", $2);
                                             exit(1);
@@ -87,15 +79,8 @@ func_decl:
                                             i++;
                                             tab = tab->op.right;
                                          }
-
-                                         if (is_const) {
-                                            is_const = 0;
-                                            $$ = ast_new_operation(AST_CONST, ast_new_trenary(AST_FUNC, ast_new_id($2), $4, $6), 0);
-                                            sym_add_func(FUNC, INT_T, &symbol_tab, $2, i, 1);
-                                         } else {
-                                            $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), $4, $6);
-                                            sym_add_func(FUNC, INT_T, &symbol_tab, $2, i, 0);
-                                         }
+                                         $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), $4, $6);
+                                         sym_add_func(FUNC, INT_T, &symbol_tab, $2, i, 0);
                                     }
   | VOID ID '(' param_l ')' block   { $$ = ast_new_trenary(AST_FUNC, ast_new_id($2), $4, $6);
                                       if (sym_search(symbol_tab, FUNC, $2) != NULL)
@@ -184,22 +169,15 @@ ret_st:
   ;
 
 var_decl:
-    d_type ID ';'        { if (sym_search(symbol_tab, INT_V, $2) != NULL)
+    INT ID ';'        { if (sym_search(symbol_tab, INT_V, $2) != NULL)
                            {
                               fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                               exit(1);
                            }
-
-                           if(is_const) {
-                              is_const = 0;
-                              $$ = ast_new_operation(AST_CONST, ast_new_operation(AST_DECL, ast_new_id($2), 0), 0);
-                              sym_add_var(INT_V, &symbol_tab, $2, -1, 1);
-                           } else {
-                              $$ = ast_new_operation(AST_DECL, ast_new_id($2), 0);
-                              sym_add_var(INT_V, &symbol_tab, $2, -1, 0);
-                           }
+                           $$ = ast_new_operation(AST_DECL, ast_new_id($2), 0);
+                           sym_add_var(INT_V, &symbol_tab, $2, -1, 0);
                           }
-  | d_type ID '=' expr ';'   { if (sym_search(symbol_tab, INT_V, $2) != NULL)
+  | INT ID '=' expr ';'   { if (sym_search(symbol_tab, INT_V, $2) != NULL)
                                {
                                   fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                                   exit(1);
@@ -209,49 +187,26 @@ var_decl:
                                   j = $4->number;
                                 else
                                   j = -1;
-                                if (is_const) 
-                                {
-                                  is_const = 0;
-                                  $$ = ast_new_operation(AST_CONST, ast_new_operation(AST_DECL, ast_new_id($2), $4) ,0);
-                                  sym_add_var(INT_V, &symbol_tab, $2, j, 1);
-                                }
-                                else {
-                                  $$ = ast_new_operation(AST_DECL, ast_new_id($2), $4);
-                                  sym_add_var(INT_V, &symbol_tab, $2, j, 0);
-                               }
+
+                                $$ = ast_new_operation(AST_DECL, ast_new_id($2), $4);
+                                sym_add_var(INT_V, &symbol_tab, $2, j, 0);
                              }
-  | d_type ID dim ';'    { if (sym_search(symbol_tab, TAB_INT, $2) != NULL)
-                           {
-                              fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
-                              exit(1);
-                           }
-
-                           if (is_const) {
-                              is_const = 0;
-                              $$ = ast_new_operation(AST_CONST, ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, 0) ,0);
-                              sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 1);
-                           } else {
-                              $$ = ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, 0);
-                              sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 0);
-                           }
-
-                           dim = 0;
-                          }
-  | d_type ID dim '=' '{' arr_arg '}' ';' { if (sym_search(symbol_tab, TAB_INT, $2) != NULL)
+  | INT ID dim ';'    { if (sym_search(symbol_tab, TAB_INT, $2) != NULL)
+                             {
+                                fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
+                                exit(1);
+                             }
+                             $$ = ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, 0);
+                             sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 0);
+                             dim = 0;
+                            }
+  | INT ID dim '=' '{' arr_arg '}' ';' { if (sym_search(symbol_tab, TAB_INT, $2) != NULL)
                                             {
                                                 fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                                                 exit(1);
                                             }
-
-                                            if (is_const) {
-                                                is_const = 0;
-                                                $$ = ast_new_operation(AST_CONST, ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, $6) ,0);
-                                                sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 1);
-                                            } else {
-                                                $$ = ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, $6);
-                                                sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 0);
-                                            }
-
+                                            $$ = ast_new_trenary(AST_ARR_DECL, ast_new_id($2), $3, $6);
+                                            sym_add_tab(TAB_INT, &symbol_tab, $2, dim, 0);
                                             dim = 0;
                                           }
   ;
@@ -259,11 +214,6 @@ var_decl:
 arr_arg:
     expr                 { $$ = ast_new_operation(AST_ARR_ARG, $1, 0); }
   | expr ',' arr_arg     { $$ = ast_new_operation(AST_ARR_ARG, $1, $3); }
-  ;
-
-d_type:
-    INT
-  | CONST INT            {  is_const = 1; }
   ;
 
 expr:
@@ -274,9 +224,9 @@ expr:
 assign_expr:
     ID '=' expr           { $$ = ast_new_operation(AST_ASIGN, ast_new_id($1), $3);
                           if($3->type == AST_NUMBER)
-                            sym_mod(&symbol_tab, $1, AS_VAL, $3->number); 
+                            sym_mod(&symbol_tab, $1, AS_VAL, $3->number);
                           else
-                            sym_mod(&symbol_tab, $1, AS_VAL, -1); 
+                            sym_mod(&symbol_tab, $1, AS_VAL, -1);
                           }
   | arr_acs '=' expr      {  if(!$1->op.right)
                             {
@@ -284,10 +234,6 @@ assign_expr:
                               exit(1);
                             }
                             $$ = ast_new_operation(AST_ASIGN, $1, $3);
-                            if($3->type == AST_NUMBER)
-                              sym_mod(&symbol_tab, $1->op.left->id, AS_VAL, $3->number); 
-                            else
-                              sym_mod(&symbol_tab, $1->op.left->id, AS_VAL, -1);
                           }
   | unar_expr            { $$ = $1; }
   ;
