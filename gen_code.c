@@ -16,7 +16,8 @@ void gencode(ast* ast)
             break;
         case AST_DIM:
             printf("[");
-            gencode(ast->op.left);
+            if(ast->op.left)
+              gencode(ast->op.left);
             printf("]");
             if(ast->op.right)
               gencode(ast->op.right);
@@ -151,7 +152,8 @@ void gencode(ast* ast)
             }
             break;
         case AST_PARAML:
-            printf("int ");
+            if(ast->op.left->type != AST_PARAML)
+              printf("int ");
             gencode(ast->op.left);
             if(ast->op.right)
             {
@@ -181,6 +183,7 @@ void gencode(ast* ast)
             printf(") ");
             gencode(ast->op.mid_r);
             printf("\n");
+
             break;
         case AST_EXPST:
             if(ast->op.left) {
@@ -210,24 +213,25 @@ void gencode(ast* ast)
         case AST_IF_ELSE:
             printf("if (");
             gencode(ast->op.left);
-            printf(")\n");
+            printf(")");
             gencode(ast->op.mid_l);
-            printf(" else \n");
+            printf(" else ");
             gencode(ast->op.mid_r);
             break;
         case AST_FOR:
             printf("for (");
             gencode(ast->op.left);
+            printf(";");
             gencode(ast->op.mid_l);
             printf(";");
             gencode(ast->op.mid_r);
-            printf(")\n");
+            printf(")");
             gencode(ast->op.right);
             break;
         case AST_WHILE:
             printf("while (");
             gencode(ast->op.left);
-            printf(")\n");
+            printf(")");
             gencode(ast->op.right);
             break;
         case AST_PROG:
