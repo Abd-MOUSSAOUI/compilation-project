@@ -4,6 +4,7 @@
   #include "ast.h"
   #include "sym_tab.h"
   #include "gen_code.h"
+  #include "print_tree.h"
 
   int yylex();
   int counter = 0, dim = 0, is_const = 0;
@@ -124,7 +125,7 @@ param_l:
                            }
                            else
                            {
-                              sym_add_var(INT_F, &symbol_tab, $2, 0, 0);
+                              sym_add_var(INT_F, &symbol_tab, $2, -1, 0);
                            }
                         }
   | INT ID ',' param_l  { $$ = ast_new_operation(AST_PARAML, ast_new_id($2), $4);
@@ -135,7 +136,7 @@ param_l:
                            }
                            else
                            {
-                              sym_add_var(INT_F, &symbol_tab, $2, 0, 0);
+                              sym_add_var(INT_F, &symbol_tab, $2, -1, 0);
                            }
                         }
   ;
@@ -203,14 +204,20 @@ var_decl:
                                   fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                                   exit(1);
                                }
-
-                               if (is_const) {
+                                int j = 0;
+                                if($4->type == AST_NUMBER)
+                                  j = $4->number;
+                                else
+                                  j = -1;
+                                if (is_const) 
+                                {
                                   is_const = 0;
                                   $$ = ast_new_operation(AST_CONST, ast_new_operation(AST_DECL, ast_new_id($2), $4) ,0);
-                                  sym_add_var(INT_V, &symbol_tab, $2, $4->number, 1);
-                               } else {
+                                  sym_add_var(INT_V, &symbol_tab, $2, j, 1);
+                                }
+                                else {
                                   $$ = ast_new_operation(AST_DECL, ast_new_id($2), $4);
-                                  sym_add_var(INT_V, &symbol_tab, $2, $4->number, 0);
+                                  sym_add_var(INT_V, &symbol_tab, $2, j, 0);
                                }
                              }
   | d_type ID dim ';'    { if (sym_search(symbol_tab, TAB_INT, $2) != NULL)
@@ -265,15 +272,22 @@ expr:
   ;
 
 assign_expr:
-    ID '=' expr          { $$ = ast_new_operation(AST_ASIGN, ast_new_id($1), $3);
-                          sym_mod(&symbol_tab, $1, AS_VAL, $3->number); }
+    ID '=' expr           { $$ = ast_new_operation(AST_ASIGN, ast_new_id($1), $3);
+                          if($3->type == AST_NUMBER)
+                            sym_mod(&symbol_tab, $1, AS_VAL, $3->number); 
+                          else
+                            sym_mod(&symbol_tab, $1, AS_VAL, -1); 
+                          }
   | arr_acs '=' expr      {  if(!$1->op.right)
                             {
                               fprintf(stderr, "ERROR: invalid assignment\n");
                               exit(1);
                             }
                             $$ = ast_new_operation(AST_ASIGN, $1, $3);
-                            sym_mod(&symbol_tab, $1->op.left->id, AS_VAL, $3->number);
+                            if($3->type == AST_NUMBER)
+                              sym_mod(&symbol_tab, $1->op.left->id, AS_VAL, $3->number); 
+                            else
+                              sym_mod(&symbol_tab, $1->op.left->id, AS_VAL, -1);
                           }
   | unar_expr            { $$ = $1; }
   ;
@@ -412,9 +426,9 @@ int main(int argc, char** argv) {
 
   if (yyparse() == 0)
   //  ast_print(parser_ast, 0);
-  //printf("\n");
+  print_ascii_tree(parser_ast);
   sym_print(symbol_tab);
-  printf("\n");
+  printf("\n\n");
   gencode(parser_ast);
   fclose(input);
 
