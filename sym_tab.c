@@ -43,7 +43,7 @@ sym_tab* sym_search(sym_tab* tab,sym_type type, char* id)
                     return tab;
                 }
         }
-        if(type == INT_F || type == FUNC)
+        if(type == FUNC)
         {
             if((strcmp(tab->id, id) == 0) && tab->type == type)
             return tab;
@@ -80,12 +80,12 @@ void sym_add_var(sym_type type, sym_tab **tab, char *name, int val, int is_const
 	}
 }
 
-void sym_add_func(sym_type type, retour_type r, sym_tab **tab, char *name, int nb_args, int is_cnst)
+void sym_add_func(sym_type type, retour_type ret, sym_tab **tab, char *name, int nb_args, int is_cnst)
 {
     sym_tab* new = new_node_func();
     new->id = strdup(name);
     new->type = type;
-    new->r_type = r;
+    new->r_type = ret;
     new->args = nb_args;
     new->is_set = 1;
     new->is_const = is_cnst;

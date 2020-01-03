@@ -8,7 +8,7 @@
 
 #define MAX_STR 42
 typedef enum sym_type { INT_V,INT_F, FUNC, TAB_INT } sym_type;
-typedef enum retour_type { VOID_T, INT_T } retour_type;
+typedef enum retour_type { INT_T, VOID_T } retour_type;
 typedef enum OPs { INCR_VAL, DECR_VAL, AS_VAL } OPs;
 
 
