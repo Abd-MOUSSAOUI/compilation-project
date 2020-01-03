@@ -7,6 +7,7 @@ sym_tab* new_node() {
   tab->is_const = 0;
   tab->is_set = 0;
   tab->i_val = -1;
+  tab->num_f = -1;
   tab->next = NULL;
   return tab;
 }
@@ -14,10 +15,9 @@ sym_tab* new_node() {
 sym_tab* new_node_func() {
   sym_tab* tab = malloc(sizeof(sym_tab));
   tab->id = NULL;
-  tab->r_type = INT_T;
   tab->is_const = 0;
   tab->is_set = 0;
-  tab->args = 0;
+  tab->num_f = 0;
   tab->next = NULL;
   return tab;
 }
@@ -32,37 +32,43 @@ sym_tab* new_node_tab() {
   return tab;
 }
 
-sym_tab* sym_search(sym_tab* tab,sym_type type, char* id)
+sym_tab* sym_search(sym_tab* tab, sym_type type, char* id, int num_func)
 {
     while (tab != NULL)
     {
-        if(type == TAB_INT || type == INT_V)
+        if(tab->num_f == num_func)
         {
-            if (strcmp(tab->id, id) == 0 && tab->type != INT_F)
+            if(type == TAB_INT || type == INT_V)
+            {
+            if (strcmp(tab->id, id) == 0)
                 {
                     return tab;
                 }
-        }
-        if(type == FUNC)
-        {
-            if((strcmp(tab->id, id) == 0) && tab->type == type)
-            return tab;
+            }
+            if(type == FUNC)
+            {
+                if((strcmp(tab->id, id) == 0) && tab->type == type)
+                return tab;
+            }
+            if(type == INT_F)
+            {
+                if((strcmp(tab->id, id) == 0) && tab->type == type && tab->num_f == num_func)
+                return tab;
+            }
         }
         tab = tab->next;
     }
     return NULL;
 }
 
-void sym_add_var(sym_type type, sym_tab **tab, char *name, int val, int is_const)
+void sym_add_var(sym_type type, sym_tab **tab, char *name, int val, int is_const,int num_func, int set)
 {
     sym_tab* new = new_node();
     new->id = strdup(name);
     new->type = type;
-    if(val >= 0)
-    {
-        new->is_set = 1;
-        new->i_val = val;
-    }
+    new->num_f = num_func;
+    new->is_set = set;
+    new->i_val = val;
     new->is_const = is_const;
     new->next = NULL;
     if (*tab == NULL)
@@ -80,7 +86,7 @@ void sym_add_var(sym_type type, sym_tab **tab, char *name, int val, int is_const
 	}
 }
 
-void sym_add_func(sym_type type, retour_type ret, sym_tab **tab, char *name, int nb_args, int is_cnst)
+void sym_add_func(sym_type type, retour_type ret, sym_tab **tab, char *name, int nb_args, int is_cnst, int num_func)
 {
     sym_tab* new = new_node_func();
     new->id = strdup(name);
@@ -89,6 +95,7 @@ void sym_add_func(sym_type type, retour_type ret, sym_tab **tab, char *name, int
     new->args = nb_args;
     new->is_set = 1;
     new->is_const = is_cnst;
+    new->num_f = num_func;
     new->next = NULL;
     if (*tab == NULL)
 	{
@@ -216,16 +223,10 @@ void sym_print(sym_tab *tab)
                     printf("val = N/O\n");
                 break;
             case FUNC:
-                if(tab->r_type == INT_T)
-                {
-                    printf("type : function\t return type: int\t");
+
+                    printf("type : function\t return type: %u\t",tab->r_type);
                     printf("nb args = %d\n", tab->args);
-                }
-                else
-                {
-                    printf("type : function\t return type: void\t");
-                    printf("nb args = %d\n", tab->args);
-                }
+
                 break;
             case TAB_INT:
                 printf("type : tab of int\t");

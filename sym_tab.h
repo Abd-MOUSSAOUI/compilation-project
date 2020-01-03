@@ -18,6 +18,7 @@ typedef struct sym_tab
 	char *id;
 	int is_const; //1 true 0 false
 	int is_set; //1 true 0 false
+	int num_f;
 	union {
 		retour_type r_type;
 		int i_val; //-1 default val
@@ -31,9 +32,9 @@ typedef struct sym_tab
 sym_tab* new_node();
 sym_tab* new_node_tab();
 sym_tab* new_node_func();
-sym_tab* sym_search(sym_tab*, sym_type, char*);
-void sym_add_var(sym_type, sym_tab **, char *, int, int);
-void sym_add_func(sym_type, retour_type, sym_tab **, char *, int, int);
+sym_tab* sym_search(sym_tab*, sym_type, char*,int);
+void sym_add_var(sym_type, sym_tab **, char *, int, int, int, int);
+void sym_add_func(sym_type, retour_type, sym_tab **, char *, int, int, int);
 void sym_add_tab(sym_type, sym_tab **, char *, int, int);
 void sym_free(sym_tab *);
 void sym_print(sym_tab *);
