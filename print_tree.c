@@ -56,9 +56,12 @@ asciinode * build_ascii_tree_recursive(ast *t)
     sprintf(node->label, "%s", " DEF ");
     node->lablen = strlen(node->label);
     node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
     node->left_child->parent_dir = -1;
-    node->right_child->parent_dir = 1;
+    if(t->op.right != NULL)
+    {
+      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child->parent_dir = 1;
+    }
   }
   if (t->type == AST_INCL)
   {
