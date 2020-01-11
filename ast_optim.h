@@ -7,5 +7,7 @@
 #include "ast.h"
 
 ast* ast_divide(ast*);
-int ast_compare(ast*, ast*);
+int are_identical(ast *, ast*);
+int is_subtree(ast*, ast*); 
+
 #endif
