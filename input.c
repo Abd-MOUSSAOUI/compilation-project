@@ -1,9 +1,12 @@
 #include <stdio.h>
-#include <string.h>
-#include "ast.h"
-#define N 100
+#define N 16
+
 
 int main() {
-  printf("dsf");
+  int i;
+  int ty[N];
+  int tx[N];
+
+  printf("\n");
   return 0;
 }

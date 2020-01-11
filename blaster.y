@@ -46,7 +46,7 @@ prog:
   | external_decl prog   { $$ = ast_new_operation(AST_PROG, $1, $2); }
 
 define:
-    DEFINE ID           { $$ = ast_new_operation(AST_DEF, ast_new_id($2), 0); 
+    DEFINE ID           { $$ = ast_new_operation(AST_DEF, ast_new_id($2), 0);
                            if (sym_search(symbol_tab, INT_V, $2, 0) != NULL)
                            {
                               fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
@@ -449,15 +449,16 @@ int main(int argc, char** argv) {
 
   if (yyparse() == 0) {
     ast* tmp  = ast_divide(parser_ast);
-    blast_ast = tmp->op.right;
+    blast_ast = tmp->op.right->op.right;
     tmp->op.right = 0;
 
-    //print_ascii_tree(parser_ast);
-    //printf("\n\n\n");
-    //print_ascii_tree(blast_ast);
+
+    print_ascii_tree(parser_ast);
+    printf("\n\n\n");
+    print_ascii_tree(blast_ast);
     //sym_print(symbol_tab);
     //printf("\n\n");
-    gencode(parser_ast, symbol_tab);
+    //gencode(parser_ast, symbol_tab);
     //printf("\n\n\n");
     //printf("\n\n\n");
     //gencode(blast_ast, symbol_tab);
@@ -468,7 +469,7 @@ int main(int argc, char** argv) {
   // Be clean.
   lex_free();
   ast_free(parser_ast);
-  ast_free(blast_ast);
+  //ast_free(blast_ast);
   sym_free(symbol_tab);
   return 0;
 }

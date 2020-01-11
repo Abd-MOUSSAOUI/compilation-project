@@ -1,3 +1,5 @@
+#define SPEC
+
 void int_vec_set(int lo, int hi, int v[], int zeb) {
   int i=20;
   while(i < hi) {
@@ -12,8 +14,4 @@ void test(int l, int h, int x[], int val) {
     x[j] = val;
     h--;
   }
-}
-int main()
-{
-  return 0;
 }
