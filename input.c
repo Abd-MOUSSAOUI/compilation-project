@@ -2,11 +2,18 @@
 #define N 16
 
 
-int main() {
-  int i;
-  int ty[N];
-  int tx[N];
+void brrrrr(int loooo, int hi, int v[], int zeb) {
+  int i=20;
+  while(i < hi) {
+    v[i] = zeb;
+    hi--;
+  }
+}
 
-  printf("\n");
-  return 0;
+void test(int l, int h, int x[], int val) {
+  int j=20;
+  while(j < h) {
+    x[j] = val;
+    h--;
+  }
 }

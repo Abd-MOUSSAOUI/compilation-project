@@ -13,7 +13,7 @@ ast* ast_divide(ast* ast)
         ast = ast->op.right;
         break;
 
-      default: break;
+      default: ast = ast->op.right; break;
     }
   }
   return NULL;

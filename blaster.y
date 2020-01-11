@@ -461,6 +461,10 @@ int main(int argc, char** argv) {
 
   if (yyparse() == 0) {
     ast* tmp  = ast_divide(parser_ast);
+    if(!tmp) {
+      fprintf(stderr, "You must define SPEC on top of your blast file\n");
+      exit(-1);
+    }
     blast_ast = tmp->op.right->op.right;
     tmp->op.right = 0;
 
