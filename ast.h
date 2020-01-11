@@ -3,6 +3,8 @@
 
 typedef enum ast_type {
     AST_PROG,
+    AST_DEF,
+    AST_INCL,
     AST_FUNC,
     AST_BLOCK,
     AST_STMTL,
