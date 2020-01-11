@@ -15,7 +15,7 @@ number                ([0-9]|([1-9][0-9]*))
 array_id              [a-zA-Z][0-9a-zA-Z]*("["[^ =;,]"]" )+
 comment               (\/\/.*)|("/*"([^*]|\*+[^*/])*\*+"/")
 incl_str              ("<"[^<>\n]+">"|\"[^"\n]+\")
-print_str             \"([^\"\\]|\\.)*\"(,[ ]*{identifier})*
+print_str             \"([^\"\\]|\\.)*\"(,[ ]*{identifier}(\[[{identifier}|{number}]\])*)*
 
 %%
 

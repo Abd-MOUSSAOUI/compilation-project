@@ -46,7 +46,18 @@ prog:
   | external_decl prog   { $$ = ast_new_operation(AST_PROG, $1, $2); }
 
 define:
-    DEFINE ID NUMBER     { $$ = ast_new_operation(AST_DEF, ast_new_id($2), ast_new_number($3)); }
+    DEFINE ID           { $$ = ast_new_operation(AST_DEF, ast_new_id($2), 0); }
+  | DEFINE ID NUMBER    { $$ = ast_new_operation(AST_DEF, ast_new_id($2), ast_new_number($3));
+                          if (sym_search(symbol_tab, INT_V, $2, num_func) != NULL)
+                           {
+                              fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
+                              exit(1);
+                           }
+                           else
+                           {
+                              sym_add_var(INT_V, &symbol_tab, $2, $3, 1, 0, 1);
+                           }
+                        }
   ;
 
 include:
