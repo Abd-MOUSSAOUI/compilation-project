@@ -16,25 +16,25 @@ main                  "main"[ ]*"()"
 comment               (\/\/.*)|("/*"([^*]|\*+[^*/])*\*+"/")
 
 
-
 %%
 
 "if"                  { return IF; }
 "else"                { return ELSE; }
 "for"                 { return FOR; }
 "while"               { return WHILE; }
+"printf"              { return PRINTF; }
 "int"                 { return INT; }
 "void"                { return VOID; }
 "const"               { return CONST; }
 "return"              { return RET; }
-
+"\"{identifier}\""    { return STR; }
 
 {identifier}          { yylval.string = strdup(yytext); return ID; }
 {number}              { yylval.value = atoi(yytext); return NUMBER; }
 {comment}             {}
 
 
-[-+*/=(){}<>,;\[\]]       { return *yytext; }
+[-+*/=(){}<>,;\[\]]   { return *yytext; }
 
 "++"                  { return INCR; }
 "--"                  { return DECR; }

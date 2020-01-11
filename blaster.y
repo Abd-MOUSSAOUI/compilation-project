@@ -23,12 +23,12 @@
   struct ast* ast;
 }
 
-%token <string> ID MAIN
+%token <string> ID STR
 %token <value> NUMBER
-%token IF ELSE FOR WHILE RET INT VOID CONST
+%token IF ELSE FOR WHILE PRINTF RET INT VOID CONST
 %token INCR DECR EQ GE LE OR AND NOT NEQ
 
-%type <ast> prog external_decl func_decl param_l param block stmt_l stmt expr_st if_st wh_st for_st ret_st var_decl arr_arg expr assign_expr unar_expr postfix_inc simp_expr cond_expr add_expr term factor func_call args arr_acs dim empty_dim
+%type <ast> prog external_decl func_decl param_l param block stmt_l stmt expr_st if_st wh_st for_st print_stmt ret_st var_decl arr_arg expr assign_expr unar_expr postfix_inc simp_expr cond_expr add_expr term factor func_call args arr_acs dim empty_dim
 
 %left '+' '-'
 %left '*' '/'
@@ -167,6 +167,7 @@ stmt:
   | if_st                { $$ = $1; }
   | wh_st                { $$ = $1; }
   | for_st               { $$ = $1; }
+  | print_stmt           { $$ = $1; }
   | ret_st               { $$ = $1; }
   ;
 
@@ -187,6 +188,10 @@ wh_st:
 for_st:
     FOR '(' assign_expr ';' cond_expr ';' unar_expr ')' block   { $$ = ast_new_fornary(AST_FOR, $3, $5, $7, $9); }
   ;
+
+print_stmt:
+    PRINTF '(' STR ')' ';'   { $$ = ast_new_operation(AST_PRINTF, ast_new_id($3), 0); }
+    ;
 
 ret_st:
     RET ';'              { $$ = ast_new_operation(AST_RET, 0, 0); }
@@ -407,15 +412,15 @@ int main(int argc, char** argv) {
     blast_ast = tmp->op.right;
     tmp->op.right = 0;
 
-    print_ascii_tree(parser_ast);
-    printf("\n\n\n");
-    print_ascii_tree(blast_ast);
+    //print_ascii_tree(parser_ast);
+    //printf("\n\n\n");
+    //print_ascii_tree(blast_ast);
     //sym_print(symbol_tab);
-    printf("\n\n");
+    //printf("\n\n");
     gencode(parser_ast, symbol_tab);
-    printf("\n\n\n");
-    printf("\n\n\n");
-    gencode(blast_ast, symbol_tab);
+    //printf("\n\n\n");
+    //printf("\n\n\n");
+    //gencode(blast_ast, symbol_tab);
   }
 
   fclose(input);

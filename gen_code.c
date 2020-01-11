@@ -239,6 +239,11 @@ void gencode(ast* ast, sym_tab* tab)
             printf(")");
             gencode(ast->op.right,tab);
             break;
+        case AST_PRINTF:
+            printf("printf (");
+            gencode(ast->op.left,tab);
+            printf(");\n");
+            break;
         case AST_PROG:
             gencode(ast->op.left,tab);
             if(ast->op.right)

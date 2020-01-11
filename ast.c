@@ -87,6 +87,10 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
+      case AST_PRINTF:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
       case AST_PROG:
         ast_free(ast->op.left);
         ast_free(ast->op.right);
@@ -296,6 +300,11 @@ void ast_print(ast* ast, int indent) {
       break;
     case AST_WHILE:
       printf("WHILE\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_PRINTF:
+      printf("PRINTF\n");
       ast_print(ast->op.left, indent + 1);
       ast_print(ast->op.right, indent + 1);
       break;

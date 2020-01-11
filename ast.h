@@ -40,6 +40,7 @@ typedef enum ast_type {
     AST_IF_ELSE,
     AST_FOR,
     AST_WHILE,
+    AST_PRINTF,
 } ast_type;
 
 typedef struct ast {
