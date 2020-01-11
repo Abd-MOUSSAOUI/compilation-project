@@ -468,10 +468,10 @@ int main(int argc, char** argv) {
     blast_ast = tmp->op.right->op.right;
     tmp->op.right = 0;
 
-
-    print_ascii_tree(parser_ast);
-    printf("\n\n\n");
-    print_ascii_tree(blast_ast);
+    if(is_subtree(parser_ast, blast_ast)) printf("is subtree\n");
+    //print_ascii_tree(parser_ast);
+    //printf("\n\n\n");
+    //print_ascii_tree(blast_ast);
     //sym_print(symbol_tab);
     //printf("\n\n");
     //gencode(parser_ast, symbol_tab);

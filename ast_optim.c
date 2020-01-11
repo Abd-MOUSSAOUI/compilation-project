@@ -29,6 +29,10 @@ int are_identical(ast* ast1, ast* ast2)
 
     if(ast1->type == AST_ID && ast2->type == AST_ID)
       return 1;
+    if(ast1->type == AST_INCL || ast2->type == AST_INCL)
+      return 1;
+    if(ast1->type == AST_DEF || ast2->type == AST_DEF)
+      return 1;
 
     return (ast1->type == ast2->type
             && are_identical(ast1->op.left, ast2->op.left)
