@@ -61,6 +61,14 @@ void ast_free(ast* ast) {
         ast_free(ast->op.left);
         ast_free(ast->op.right);
         break;
+      case AST_DEF:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
+      case AST_INCL:
+        ast_free(ast->op.left);
+        ast_free(ast->op.right);
+        break;
       case AST_ARRAY:
         ast_free(ast->op.left);
         ast_free(ast->op.right);
@@ -214,6 +222,16 @@ void ast_print(ast* ast, int indent) {
       printf("NUMBER (%d)\n", ast->number);
       break;
     case AST_CONST:
+      break;
+    case AST_DEF:
+      printf("DEFINE\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
+      break;
+    case AST_INCL:
+      printf("INCLUDE\n");
+      ast_print(ast->op.left, indent + 1);
+      ast_print(ast->op.right, indent + 1);
       break;
     case AST_ARRAY:
       printf("ARRAY_ACCESS\n");

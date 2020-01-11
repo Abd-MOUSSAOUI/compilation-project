@@ -8,6 +8,7 @@
   #include "print_tree.h"
 
   int yylex();
+  int std_inc = 0;
   int counter = 0, dim = 0, nb_args = 0, num_func = 0;
   FILE* yyin;
   void yyerror(char*);
@@ -25,10 +26,10 @@
 
 %token <string> ID STR
 %token <value> NUMBER
-%token IF ELSE FOR WHILE PRINTF RET INT VOID CONST
+%token IF ELSE FOR WHILE PRINTF RET INT VOID CONST INCLUDE DEFINE
 %token INCR DECR EQ GE LE OR AND NOT NEQ
 
-%type <ast> prog external_decl func_decl param_l param block stmt_l stmt expr_st if_st wh_st for_st print_stmt ret_st var_decl arr_arg expr assign_expr unar_expr postfix_inc simp_expr cond_expr add_expr term factor func_call args arr_acs dim empty_dim
+%type <ast> prog include define external_decl func_decl param_l param block stmt_l stmt expr_st if_st wh_st for_st print_stmt ret_st var_decl arr_arg expr assign_expr unar_expr postfix_inc simp_expr cond_expr add_expr term factor func_call args arr_acs dim empty_dim
 
 %left '+' '-'
 %left '*' '/'
@@ -44,8 +45,21 @@ prog:
     external_decl        { $$ = $1; }
   | external_decl prog   { $$ = ast_new_operation(AST_PROG, $1, $2); }
 
+define:
+    DEFINE ID NUMBER     { $$ = ast_new_operation(AST_DEF, ast_new_id($2), ast_new_number($3)); }
+  ;
+
+include:
+    INCLUDE STR          { $$ = ast_new_operation(AST_INCL, ast_new_id($2), 0);
+                           if(!strcmp($2, "<stdio.h>"))
+                              std_inc = 1;
+                         }
+  ;
+
 external_decl:
-    var_decl             { $$ = $1; }
+    include              { $$ = $1; }
+  | define               { $$ = $1; }
+  | var_decl             { $$ = $1; }
   | func_decl            { $$ = $1; }
   ;
 
@@ -190,7 +204,12 @@ for_st:
   ;
 
 print_stmt:
-    PRINTF '(' STR ')' ';'   { $$ = ast_new_operation(AST_PRINTF, ast_new_id($3), 0); }
+    PRINTF '(' STR ')' ';'   { if(!std_inc) {
+                                  fprintf(stderr, "implicitly declaring library function 'printf'");
+                                  exit(1);
+                               }
+                               $$ = ast_new_operation(AST_PRINTF, ast_new_id($3), 0);
+                             }
     ;
 
 ret_st:

@@ -10,11 +10,12 @@
 %option noyywrap
 
 identifier            [a-zA-Z_][0-9a-zA-Z_]*
+string                \"([^\"\\]|\\.)*\"
 number                ([0-9]|([1-9][0-9]*))
 array_id              [a-zA-Z][0-9a-zA-Z]*("["[^ =;,]"]" )+
-main                  "main"[ ]*"()"
 comment               (\/\/.*)|("/*"([^*]|\*+[^*/])*\*+"/")
-
+incl_str              ("<"[^<>\n]+">"|\"[^"\n]+\")
+print_str             \"([^\"\\]|\\.)*\"(,[ ]*{identifier})*
 
 %%
 
@@ -27,8 +28,11 @@ comment               (\/\/.*)|("/*"([^*]|\*+[^*/])*\*+"/")
 "void"                { return VOID; }
 "const"               { return CONST; }
 "return"              { return RET; }
-"\"{identifier}\""    { return STR; }
+"#include"            { return INCLUDE; }
+"#define"             { return DEFINE; }
 
+{incl_str}            { yylval.string = strdup(yytext); return STR; }
+{print_str}           { yylval.string = strdup(yytext); return STR; }
 {identifier}          { yylval.string = strdup(yytext); return ID; }
 {number}              { yylval.value = atoi(yytext); return NUMBER; }
 {comment}             {}

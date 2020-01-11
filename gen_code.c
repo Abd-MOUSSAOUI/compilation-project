@@ -244,6 +244,18 @@ void gencode(ast* ast, sym_tab* tab)
             gencode(ast->op.left,tab);
             printf(");\n");
             break;
+        case AST_DEF:
+            printf("#define ");
+            gencode(ast->op.left,tab);
+            printf(" ");
+            gencode(ast->op.right,tab);
+            printf("\n");
+            break;
+        case AST_INCL:
+            printf("#include ");
+            gencode(ast->op.left,tab);
+            printf("\n");
+            break;
         case AST_PROG:
             gencode(ast->op.left,tab);
             if(ast->op.right)
