@@ -29,20 +29,22 @@ int are_identical(ast* ast1, ast* ast2)
 
     if(ast1->type == AST_ID && ast2->type == AST_ID)
       return 1;
-    if(ast1->type == AST_INCL || ast2->type == AST_INCL)
-      return 1;
-    if(ast1->type == AST_DEF || ast2->type == AST_DEF)
-      return 1;
+    //if(ast1->type == AST_INCL || ast2->type == AST_INCL)
+    //  return 1;
+    //if(ast1->type == AST_PROG)
+    //  return 1;
+    //if(ast1->type == AST_FUNC || ast2->type == AST_FUNC)
+    //  return 1;
+    //if(ast1->type == AST_DEF || ast2->type == AST_DEF)
+    //  return 1;
     if(ast1->type == AST_FOR && ast2->type == AST_FOR)
     {
-      return are_identical(ast1->op.left, ast2->op.left) 
+      return ( are_identical(ast1->op.left, ast2->op.left) 
              && are_identical(ast1->op.mid_l, ast2->op.mid_l)
              && are_identical(ast1->op.mid_r, ast2->op.mid_r)
-             && are_identical(ast1->op.right, ast2->op.right);
-
+             && are_identical(ast1->op.right, ast2->op.right) );
     }
-    else
-      return (ast1->type == ast2->type
+    return (ast1->type == ast2->type
             && are_identical(ast1->op.left, ast2->op.left)
             && are_identical(ast1->op.right, ast2->op.right) );
 }
