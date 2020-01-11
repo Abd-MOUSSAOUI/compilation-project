@@ -11,6 +11,7 @@
   int std_inc = 0;
   int counter = 0, dim = 0, nb_args = 0, num_func = 0;
   FILE* yyin;
+  FILE* blast;
   void yyerror(char*);
   void lex_free();
   struct sym_tab* symbol_tab = NULL;
@@ -439,8 +440,19 @@ args:
 
 int main(int argc, char** argv) {
 
+  if(argc != 3) {
+    fprintf(stderr, "Usage: ./a.out src_file blast_file\n");
+    exit(-1);
+  }
+
   FILE* input = fopen(argv[1], "r");
   if(input == 0) {
+    perror("error while opening file");
+    exit(-1);
+  }
+
+  blast = fopen(argv[2], "r");
+  if(blast == 0) {
     perror("error while opening file");
     exit(-1);
   }

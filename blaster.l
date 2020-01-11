@@ -4,6 +4,7 @@
   #include "y.tab.h"
 
   int end = 0;
+  FILE* blast;
 %}
 
 %option nounput
@@ -57,7 +58,7 @@ print_str             \"([^\"\\]|\\.)*\"(,[ ]*{identifier}(\[[{identifier}|{numb
 <<EOF>>               { if(end)
                           yyterminate();
 
-                        yyin = fopen("blast.c", "r");
+                        yyin = blast;
                         yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
                         end++;
                         BEGIN(INITIAL);
