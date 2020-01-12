@@ -1,21 +1,26 @@
-void test1(int lo, int hi, int v1[], int v2[]) 
+#include <stdio.h>
+
+int main() 
 {
-    int i;
-    for (i = lo; i < hi; i++) {
-    int tmp = v2[i];
-    v2[i] = v1[i];
-    v1[i] = tmp;
-  }
+int i;
+int ty[10];
+int tx[22];
+for (i = 0; i < 2; i++) 
+{
+tx[i] = 1;
 }
-void test(int l, int h, int v[], int vx)
-{
-    int j;
-    for (j = l; j < h; j--) {
-      v[j] = vx;
-    }
-} 
-int main()
-{
-  int a = 23;
-  return 0;
+for (i = 2; i < 31; i++) {
+tx[i] = 2;
+}
+for (i = 0; i < 33; i++) {
+ty[i] = 2 * 4 + 1;
+}
+for (i = 4; i < 3*4; i++) {
+ty[i] = 5 * tx[i] + ty[i];
+}
+for (i = 0; i < 33; i++) {
+printf("%d ", ty[i]);
+}
+printf("\n");
+return 0;
 }

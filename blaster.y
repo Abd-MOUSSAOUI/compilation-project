@@ -567,10 +567,13 @@ int main(int argc, char** argv) {
     {
         //gencode(parser_ast, symbol_tab);
     }
-
-    if(is_subtree(parser_ast, blast_ast->mid_r->left->right)) printf("is subtree\n");
+    optimizer(&parser_ast,blast_ast);
     //print_ascii_tree(parser_ast);
+    gencode(parser_ast, symbol_tab);
+    //print_ascii_tree(parser_ast->left->mid_r->left->right->right);
     //print_ascii_tree(blast_ast->mid_r->left->right);
+    //if(are_identical(parser_ast->left->mid_r->left->right->right, blast_ast->mid_r->left->right)) printf("is subtree\n");
+
   }
 
   fclose(input);
