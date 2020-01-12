@@ -56,7 +56,7 @@ typedef struct ast {
       struct ast* mid_l;
       struct ast* mid_r;
       struct ast* right;
-    } op;
+    };
   };
 } ast;
 

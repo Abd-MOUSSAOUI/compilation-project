@@ -55,11 +55,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " DEF ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -67,22 +67,22 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", "INCLUDE");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_PRINTF)
   {
     sprintf(node->label, "%s", "PRINTF");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_ADD)
   {
     sprintf(node->label, "%s", " + ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -90,8 +90,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " - ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -99,8 +99,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " * ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -108,8 +108,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " / ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -127,8 +127,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " = ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -136,29 +136,29 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " -(UN) ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_INCR)
   {
     sprintf(node->label, "%s", " ++ ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_DECR)
   {
     sprintf(node->label, "%s", " -- ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_EQ)
   {
     sprintf(node->label, "%s", " == ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -166,8 +166,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " != ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -175,8 +175,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " > ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -184,8 +184,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " >= ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -193,8 +193,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " < ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -202,8 +202,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " <= ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -211,9 +211,9 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " RETURN ");
     node->lablen = strlen(node->label);
-    if(t->op.left != NULL)
+    if(t->left != NULL)
     {
-      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child = build_ascii_tree_recursive(t->left);
       node->left_child->parent_dir = -1;
     }
   }
@@ -221,11 +221,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " FUNC ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.mid_r);
-    if(t->op.mid_l != NULL)
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->mid_r);
+    if(t->mid_l != NULL)
     {
-      node->left_child->left_child = build_ascii_tree_recursive(t->op.mid_l);
+      node->left_child->left_child = build_ascii_tree_recursive(t->mid_l);
       node->left_child->left_child->parent_dir = -1;
     }
     node->left_child->parent_dir = -1;
@@ -235,14 +235,14 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", "BLOCK");
     node->lablen = strlen(node->label);
-    if(t->op.left != NULL)
+    if(t->left != NULL)
     {
-      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child = build_ascii_tree_recursive(t->left);
       node->left_child->parent_dir = -1;
     }
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -250,11 +250,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", "STMT");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -262,11 +262,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " DECL");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -274,8 +274,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " IF ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.mid_l);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->mid_l);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -283,8 +283,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " WHILE ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -292,11 +292,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " PROG ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -304,11 +304,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " ARG ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -316,11 +316,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " PARAM ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -328,23 +328,25 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " ARRAY_DEC ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->mid_l);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    node->left_child->parent_dir = 1;
+    if(t->mid_r != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
-      node->right_child->parent_dir = 1;
+      node->right_child->right_child = build_ascii_tree_recursive(t->mid_r);
+      node->right_child->right_child->parent_dir = 1;
     }
   }
   if (t->type == AST_ARRAY)
   {
     sprintf(node->label, "%s", " ARRAY_ACS ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -352,8 +354,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " AND ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -361,8 +363,8 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " OR ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
   }
@@ -370,14 +372,15 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " NOT ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
   }
   if (t->type == AST_EXPST)
   {
-    if(t->op.left != NULL)
+    if(t->left != NULL)
     {
-      node->left_child = build_ascii_tree_recursive(t->op.left);
+      sprintf(node->label, "%s", " EXPST ");
+      node->left_child = build_ascii_tree_recursive(t->left);
       node->left_child->parent_dir = -1;
     }
   }
@@ -385,14 +388,14 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " DIM ");
     node->lablen = strlen(node->label);
-    if(t->op.left != NULL)
+    if(t->left != NULL)
     {
-      node->left_child = build_ascii_tree_recursive(t->op.left);
+      node->left_child = build_ascii_tree_recursive(t->left);
       node->left_child->parent_dir = -1;
     }
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -400,11 +403,11 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", " FUNC_CALL ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
+    node->left_child = build_ascii_tree_recursive(t->left);
     node->left_child->parent_dir = -1;
-    if(t->op.right != NULL)
+    if(t->right != NULL)
     {
-      node->right_child = build_ascii_tree_recursive(t->op.right);
+      node->right_child = build_ascii_tree_recursive(t->right);
       node->right_child->parent_dir = 1;
     }
   }
@@ -412,21 +415,21 @@ asciinode * build_ascii_tree_recursive(ast *t)
   {
     sprintf(node->label, "%s", "IF_ELSE");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.mid_l);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->mid_l);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
-    node->right_child->right_child = build_ascii_tree_recursive(t->op.mid_r);
+    node->right_child->right_child = build_ascii_tree_recursive(t->mid_r);
     node->right_child->right_child->parent_dir = 1;
   }
   if (t->type == AST_FOR)
   {
     sprintf(node->label, "%s", " FOR ");
     node->lablen = strlen(node->label);
-    node->left_child = build_ascii_tree_recursive(t->op.left);
-    node->right_child = build_ascii_tree_recursive(t->op.right);
-    node->left_child->left_child->left_child = build_ascii_tree_recursive(t->op.mid_l);
-    node->left_child->left_child->left_child->left_child->left_child = build_ascii_tree_recursive(t->op.mid_r);
+    node->left_child = build_ascii_tree_recursive(t->left);
+    node->right_child = build_ascii_tree_recursive(t->right);
+    node->left_child->left_child->left_child = build_ascii_tree_recursive(t->mid_l);
+    node->left_child->left_child->left_child->left_child->left_child = build_ascii_tree_recursive(t->mid_r);
     node->left_child->parent_dir = -1;
     node->right_child->parent_dir = 1;
     node->left_child->left_child->left_child->parent_dir = -1;

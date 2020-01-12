@@ -7,13 +7,13 @@ ast* ast_divide(ast* ast)
     switch (ast->type)
     {
       case AST_PROG:
-        if(ast->op.right->op.left->type == AST_DEF)
-          if(!strcmp(ast->op.right->op.left->op.left->id, "SPEC"))
+        if(ast->right->left->type == AST_DEF)
+          if(!strcmp(ast->right->left->left->id, "SPEC"))
             return ast;
-        ast = ast->op.right;
+        ast = ast->right;
         break;
 
-      default: ast = ast->op.right; break;
+      default: ast = ast->right; break;
     }
   }
   return NULL;
@@ -39,14 +39,14 @@ int are_identical(ast* ast1, ast* ast2)
     //  return 1;
     if(ast1->type == AST_FOR && ast2->type == AST_FOR)
     {
-      return ( are_identical(ast1->op.left, ast2->op.left) 
-             && are_identical(ast1->op.mid_l, ast2->op.mid_l)
-             && are_identical(ast1->op.mid_r, ast2->op.mid_r)
-             && are_identical(ast1->op.right, ast2->op.right) );
+      return ( are_identical(ast1->left, ast2->left) 
+             && are_identical(ast1->mid_l, ast2->mid_l)
+             && are_identical(ast1->mid_r, ast2->mid_r)
+             && are_identical(ast1->right, ast2->right) );
     }
     return (ast1->type == ast2->type
-            && are_identical(ast1->op.left, ast2->op.left)
-            && are_identical(ast1->op.right, ast2->op.right) );
+            && are_identical(ast1->left, ast2->left)
+            && are_identical(ast1->right, ast2->right) );
 }
 
 int is_subtree(ast* ast1, ast* ast2)
@@ -60,5 +60,8 @@ int is_subtree(ast* ast1, ast* ast2)
     if (are_identical(ast1, ast2))
         return 1;
 
-    return is_subtree(ast1->op.left, ast2) || is_subtree(ast1->op.right, ast2);
+    if(ast1->type == AST_FUNC)
+      return is_subtree(ast1->left, ast2) || is_subtree(ast1->mid_l, ast2) || is_subtree(ast1->mid_r, ast2);
+
+    return is_subtree(ast1->left, ast2) || is_subtree(ast1->right, ast2);
 }

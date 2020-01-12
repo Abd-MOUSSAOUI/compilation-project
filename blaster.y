@@ -367,7 +367,7 @@ assign_expr:
                           else
                             sym_mod(&symbol_tab, $1, AS_VAL, -1);
                           }
-  | arr_acs '=' expr      {  if(!$1->op.right)
+  | arr_acs '=' expr      {  if(!$1->right)
                             {
                               fprintf(stderr, "ERROR: invalid assignment\n");
                               exit(1);
@@ -433,7 +433,7 @@ factor:
                           }
   | NUMBER               { $$ = ast_new_number($1); }
   | func_call            { $$ = $1; }
-  | arr_acs              { if(!$1->op.right) {
+  | arr_acs              { if(!$1->right) {
                              fprintf(stderr, "ERROR, unexpected expression\n");
                              exit(1);
                            }
@@ -532,8 +532,8 @@ int main(int argc, char** argv) {
       fprintf(stderr, "You must add '#define SPEC' on top of the spec file\n");
       exit(-1);
     }
-    blast_ast = tmp->op.right->op.right;
-    tmp->op.right = 0;
+    blast_ast = tmp->right->right;
+    tmp->right = 0;
 
     if(v)
     {
@@ -566,9 +566,11 @@ int main(int argc, char** argv) {
     }
     else
     {
-      gencode(parser_ast, symbol_tab);
+      //gencode(parser_ast, symbol_tab);
     }
-    //if(is_subtree(parser_ast, blast_ast)) printf("is subtree\n");
+    //if(is_subtree(parser_ast, blast_ast->right->left)) printf("is subtree\n");
+    print_ascii_tree(blast_ast->right->left);
+    print_ascii_tree(parser_ast);
   }
 
   fclose(input);
