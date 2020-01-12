@@ -1,7 +1,7 @@
 #include "ast_optim.h"
 
 
-void optimizer(ast** ast1, ast* blast)
+void optimizer(ast* ast1, ast* blast)
 {
   if(ast1 == NULL)
     return;
@@ -9,38 +9,85 @@ void optimizer(ast** ast1, ast* blast)
   if(ast1 != NULL)
   {
     tmp = blast;
-    switch((*ast1)->type)
+    switch(ast1->type)
     {
       case AST_PROG:
-        optimizer((*ast1).left,blast);
-        optimizer((*ast1).right,blast);
+        optimizer(ast1->left,blast);
+        optimizer(ast1->right,blast);
         break;
       case AST_FUNC:
-        optimizer((*ast1)->mid_r,blast);
-        break; 
+        optimizer(ast1->mid_r,blast);
+        break;
       case AST_BLOCK:
-        optimizer((*ast1)->left,blast);
-        break;
-      case AST_STMTL:
-        optimizer((*ast1)->left,blast);
-        optimizer((*ast1)->right,blast);
-        break;
-      case AST_FOR:
+        if(ast1->left->type == AST_FOR) {
           while(tmp->type == AST_PROG || tmp->type == AST_FUNC)
           {
             if(tmp->type == AST_FUNC)
             {
-              if(are_identical((*ast1),ast_first_for(tmp)))
-                ast_replace(ast1,tmp);
+              if(are_identical(ast1->left,ast_first_for(tmp)))
+                ast1->left = ast_replace(ast1->left,tmp);
               break;
             }
-            if(are_identical((*ast1),ast_first_for(tmp->left)))
-            {
-              ast_replace(ast1,tmp);
-            }
+
+            if(are_identical(ast1->left,ast_first_for(tmp->left)))
+              ast1->left = ast_replace(ast1->left,tmp->left);
             tmp = tmp->right;
           }
+        } else {
+          optimizer(ast1->left,blast);
+        }
         break;
+      case AST_STMTL:
+        if(ast1->left->type == AST_FOR) {
+          while(tmp->type == AST_PROG || tmp->type == AST_FUNC)
+          {
+            if(tmp->type == AST_FUNC)
+            {
+              if(are_identical(ast1->left,ast_first_for(tmp)))
+                ast1->left = ast_replace(ast1->left,tmp);
+              break;
+            }
+
+            if(are_identical(ast1->left,ast_first_for(tmp->left)))
+              ast1->left = ast_replace(ast1->left,tmp->left);
+            tmp = tmp->right;
+          }
+        }
+
+        if(ast1->right->type == AST_FOR) {
+          while(tmp->type == AST_PROG || tmp->type == AST_FUNC)
+          {
+            if(tmp->type == AST_FUNC)
+            {
+              if(are_identical(ast1->right,ast_first_for(tmp)))
+                ast1->right = ast_replace(ast1->right,tmp);
+              break;
+            }
+
+            if(are_identical(ast1->right,ast_first_for(tmp->left)))
+              ast1->right = ast_replace(ast1->right,tmp->left);
+            tmp = tmp->right;
+          }
+        }
+
+        optimizer(ast1->left,blast);
+        optimizer(ast1->right,blast);
+        break;
+      // case AST_FOR:
+      //     while(tmp->type == AST_PROG || tmp->type == AST_FUNC)
+      //     {
+      //       if(tmp->type == AST_FUNC)
+      //       {
+      //         if(are_identical(ast1,ast_first_for(tmp)))
+      //           ast_replace(&ast1,tmp);
+      //         break;
+      //       }
+      //
+      //       if(are_identical(ast1,ast_first_for(tmp->left)))
+      //         ast_replace(&ast1,tmp->left);
+      //       tmp = tmp->right;
+      //     }
+      //   break;
       default:
         break;
     }
@@ -73,28 +120,28 @@ ast* ast_first_for(ast* ast)
   return NULL;
 }
 
-void ast_replace(ast** ast1, ast* ast2) {
+ast* ast_replace(ast* ast1, ast* ast2) {
   ast* result;
   if(!strcmp(ast2->left->id, "axpy")) {
      ast *x, *a;
-     ast* high = (*ast1)->mid_l->right;
-     ast* y    = (*ast1)->right->left->left->left->left;
+     ast* high = ast1->mid_l->right;
+     ast* y    = ast1->right->left->left->left->left;
 
-     if((*ast1)->right->left->left->right->left->type == AST_MUL) {
-       if((*ast1)->right->left->left->right->left->left->type == AST_ARRAY) {
-          x = (*ast1)->right->left->left->right->left->left->left;
-          a = (*ast1)->right->left->left->right->left->right;
+     if(ast1->right->left->left->right->left->type == AST_MUL) {
+       if(ast1->right->left->left->right->left->left->type == AST_ARRAY) {
+          x = ast1->right->left->left->right->left->left->left;
+          a = ast1->right->left->left->right->left->right;
        } else {
-          x = (*ast1)->right->left->left->right->left->right->left;
-          a = (*ast1)->right->left->left->right->left->left;
+          x = ast1->right->left->left->right->left->right->left;
+          a = ast1->right->left->left->right->left->left;
        }
      } else {
-       if((*ast1)->right->left->left->right->right->left->type == AST_ARRAY) {
-          x = (*ast1)->right->left->left->right->right->left->left;
-          a = (*ast1)->right->left->left->right->right->right;
+       if(ast1->right->left->left->right->right->left->type == AST_ARRAY) {
+          x = ast1->right->left->left->right->right->left->left;
+          a = ast1->right->left->left->right->right->right;
        } else {
-          x = (*ast1)->right->left->left->right->right->right->left;
-          a = (*ast1)->right->left->left->right->right->left;
+          x = ast1->right->left->left->right->right->right->left;
+          a = ast1->right->left->left->right->right->left;
        }
      }
 
@@ -106,28 +153,29 @@ void ast_replace(ast** ast1, ast* ast2) {
      result = ast_new_operation(AST_ARG, a, result);
      result = ast_new_operation(AST_ARG, high, result);
      result = ast_new_operation(AST_CALL, ast_new_id("axpy"), result);
+     result = ast_new_operation(AST_EXPST, result, 0);
   }
 
   if(!strcmp(ast2->left->id, "gemv")) {
     ast* beta;
-    ast* m  = (*ast1)->mid_l->right;
-    ast* y  = (*ast1)->right->left->right->left->left->left;
+    ast* m  = ast1->mid_l->right;
+    ast* y  = ast1->right->left->right->left->left->left;
 
-    if((*ast1)->right->left->right->left->right->right->type == AST_ARRAY) {
-    if((*ast1)->right->left->right->left->right->left->right->type == AST_ARRAY)
-        beta = (*ast1)->right->left->right->left->right->left->left;
+    if(ast1->right->left->right->left->right->right->type == AST_ARRAY) {
+    if(ast1->right->left->right->left->right->left->right->type == AST_ARRAY)
+        beta = ast1->right->left->right->left->right->left->left;
       else
-        beta = (*ast1)->right->left->right->left->right->left->right;
+        beta = ast1->right->left->right->left->right->left->right;
     } else {
-      if((*ast1)->right->left->right->left->right->right->left->type == AST_ARRAY)
-        beta = (*ast1)->right->left->right->left->right->right->right;
+      if(ast1->right->left->right->left->right->right->left->type == AST_ARRAY)
+        beta = ast1->right->left->right->left->right->right->right;
       else
-        beta = (*ast1)->right->left->right->left->right->right->left;
+        beta = ast1->right->left->right->left->right->right->left;
     }
 
 
     ast* alpha, *a, *x;
-    ast* f2 = (*ast1)->right->left->left;
+    ast* f2 = ast1->right->left->left;
     ast* n  = f2->mid_l->right;
 
     if(f2->right->left->left->right->right->type == AST_ARRAY) {
@@ -164,8 +212,9 @@ void ast_replace(ast** ast1, ast* ast2) {
     result = ast_new_operation(AST_ARG, m, result);
     result = ast_new_operation(AST_ARG, ast_new_number(78), result);
     result = ast_new_operation(AST_CALL, ast_new_id("gemv"), result);
+    result = ast_new_operation(AST_EXPST, result, 0);
   }
-  (*ast1) = result;
+  return result;
 }
 
 
@@ -190,7 +239,7 @@ ast* ast_divide(ast* ast)
 
 
 bool are_identical(ast* ast1, ast* ast2)
-{      
+{
     if(ast1 == NULL && ast2 == NULL)
     {
       return true;
@@ -198,7 +247,7 @@ bool are_identical(ast* ast1, ast* ast2)
     if(ast1 == NULL || ast2 == NULL)
     {
       return false;
-    }    
+    }
 
     if((ast1->type == AST_ID || ast1->type == AST_NUMBER) && (ast2->type == AST_NUMBER || ast2->type == AST_ID))
      return 1;
@@ -206,7 +255,7 @@ bool are_identical(ast* ast1, ast* ast2)
     if(ast1->type == AST_FOR && ast2->type == AST_FOR)
     {
       return ( ast1->type == ast2->type
-             && are_identical(ast1->left, ast2->left) 
+             && are_identical(ast1->left, ast2->left)
              && are_identical(ast1->mid_l, ast2->mid_l)
              && are_identical(ast1->mid_r, ast2->mid_r)
              && are_identical(ast1->right, ast2->right) );
@@ -214,6 +263,5 @@ bool are_identical(ast* ast1, ast* ast2)
     else
     {
       return ( ast1->type == ast2->type && are_identical(ast1->left, ast2->left) && are_identical(ast1->right, ast2->right) );
-    } 
+    }
 }
-   

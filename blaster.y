@@ -34,7 +34,7 @@
             {"help", no_argument, &help_flag, 1},
             {"version", no_argument, 0, 'v'},
             {"tos", no_argument, 0, 't'},
-            {"ast", no_argument, 0, 'a'}, 
+            {"ast", no_argument, 0, 'a'},
             {"o_flag", required_argument, 0, 'o'},
             {0, 0, 0, 0}
           };
@@ -81,7 +81,7 @@
         printf("--o <name> écris le code résultat dans le fichier name\n");
     }
     /* Print any remaining command line arguments (not options). */
-  }  
+  }
 
 %}
 
@@ -555,7 +555,7 @@ int main(int argc, char** argv) {
     if(o)
     {
         FILE *fp;
-        if((fp=freopen(strcat(o_flag_name,".c"), "w" ,stdout))==NULL) 
+        if((fp=freopen(strcat(o_flag_name,".c"), "w" ,stdout))==NULL)
         {
           printf("Cannot open file.\n");
           exit(-1);
@@ -567,12 +567,12 @@ int main(int argc, char** argv) {
     {
         //gencode(parser_ast, symbol_tab);
     }
-    optimizer(&parser_ast,blast_ast);
+
+    optimizer(parser_ast, blast_ast);
     //print_ascii_tree(parser_ast);
     gencode(parser_ast, symbol_tab);
     //print_ascii_tree(parser_ast->left->mid_r->left->right->right);
-    //print_ascii_tree(blast_ast->mid_r->left->right);
-    //if(are_identical(parser_ast->left->mid_r->left->right->right, blast_ast->mid_r->left->right)) printf("is subtree\n");
+  //  print_ascii_tree(blast_ast);
 
   }
 
