@@ -28,3 +28,13 @@ int multiplication(int a, int b)
 {
 	return a*b;
 }
+int main()
+{
+	int a = 3;
+	int hi = 33;
+	int v1[];
+	int v2[];
+	multiplication(3,6);
+	void func2(a, hi, v1[],v2[]);
+
+}
