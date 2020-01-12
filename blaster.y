@@ -114,25 +114,25 @@ prog:
 
 define:
     DEFINE ID           { $$ = ast_new_operation(AST_DEF, ast_new_id($2), 0);
-                           if (sym_search(symbol_tab, INT_V, $2, 0) != NULL)
+                           if (sym_search(symbol_tab, INT_V, $2, -1) != NULL)
                            {
                               fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                               exit(1);
                            }
                            else
                            {
-                              sym_add_var(INT_V, &symbol_tab, $2, -1, 1, 0, 1);
+                              sym_add_var(INT_V, &symbol_tab, $2, -1, 0, -1, 1);
                            }
                         }
   | DEFINE ID NUMBER    { $$ = ast_new_operation(AST_DEF, ast_new_id($2), ast_new_number($3));
-                          if (sym_search(symbol_tab, INT_V, $2, 0) != NULL)
+                          if (sym_search(symbol_tab, INT_V, $2, -1) != NULL)
                            {
                               fprintf(stderr, "ERROR: Re-definition of %s\n", $2);
                               exit(1);
                            }
                            else
                            {
-                              sym_add_var(INT_V, &symbol_tab, $2, $3, 1, 0, 1);
+                              sym_add_var(INT_V, &symbol_tab, $2, $3, 1, -1, 1);
                            }
                         }
   ;
@@ -526,7 +526,8 @@ int main(int argc, char** argv) {
 
   yyin = input;
 
-  if (yyparse() == 0) {
+  if (yyparse() == 0) 
+  {
     ast* tmp  = ast_divide(parser_ast);
     if(!tmp) {
       fprintf(stderr, "You must add '#define SPEC' on top of the spec file\n");
@@ -542,16 +543,27 @@ int main(int argc, char** argv) {
         printf("BEGRICHE MASSINISSA (SIRIS)");
         printf("\n\n");
     }
+
     if(t)
     {
         sym_print(symbol_tab);
         printf("\n\n");
     }
+
     if(a)
     {
         print_ascii_tree(parser_ast);
         printf("\n\n");
     }
+
+    optimizer(parser_ast, blast_ast);
+    
+    if(a)
+    {
+        print_ascii_tree(parser_ast);
+        printf("\n\n");
+    }
+
     if(o)
     {
         FILE *fp;
@@ -562,17 +574,11 @@ int main(int argc, char** argv) {
         }
         gencode(parser_ast, symbol_tab);
         fclose(fp);
-    }
+    } 
     else
     {
-        //gencode(parser_ast, symbol_tab);
+        gencode(parser_ast, symbol_tab);
     }
-
-    optimizer(parser_ast, blast_ast);
-    //print_ascii_tree(parser_ast);
-    gencode(parser_ast, symbol_tab);
-    //print_ascii_tree(parser_ast->left->mid_r->left->right->right);
-  //  print_ascii_tree(blast_ast);
 
   }
 
