@@ -1,6 +1,8 @@
 %{
   #include <stdio.h>
   #include <stdlib.h>
+  #include <getopt.h>
+  #include <string.h>
   #include "ast.h"
   #include "sym_tab.h"
   #include "gen_code.h"
@@ -17,6 +19,70 @@
   struct sym_tab* symbol_tab = NULL;
   struct ast* parser_ast = NULL;
   struct ast* blast_ast = NULL;
+  static int help_flag;
+  int v = 0, t = 0, a = 0, o=0;
+  char *o_flag_name = NULL;
+
+  void getopts(int argc, char **argv)
+  {
+    int c;
+
+    while (1)
+      {
+        static struct option long_options[] =
+          {
+            {"help", no_argument, &help_flag, 1},
+            {"version", no_argument, 0, 'v'},
+            {"tos", no_argument, 0, 't'},
+            {"ast", no_argument, 0, 'a'}, 
+            {"o_flag", required_argument, 0, 'o'},
+            {0, 0, 0, 0}
+          };
+        /* getopt_long stores the option index here. */
+        int option_index = 0;
+        c = getopt_long(argc, argv, "vtao:", long_options, &option_index);
+
+        /* Detect the end of the options. */
+        if (c == -1)
+          break;
+
+        switch (c)
+          {
+          case 'o':
+              o = 1;
+              o_flag_name = optarg;
+            break;
+          case 'v':
+              v = 1;;
+            break;
+          case 't':
+              t = 1;;
+            break;
+          case 'a':
+              a = 1;;
+            break;
+          case '?':
+            if (optopt == 'c')
+              fprintf(stderr, "Option -c requires an argument.\n");
+            else
+              fprintf(stderr, "Unknown option character\n");
+            break;
+
+          default:
+            break;
+          }
+      }
+    if(help_flag)
+    {
+        printf("\nOptions :\n");
+        printf("--version indique les membres du groupe.\n");
+        printf("--tos affiche la table des symboles.\n");
+        printf("--ast affiche l’AST.\n");
+        printf("--o <name> écris le code résultat dans le fichier name\n");
+    }
+    /* Print any remaining command line arguments (not options). */
+  }  
+
 %}
 
 %union {
@@ -440,20 +506,21 @@ args:
 
 int main(int argc, char** argv) {
 
-  if(argc != 3) {
-    fprintf(stderr, "Usage: ./a.out src_file blast_file\n");
+  getopts(argc, argv);
+  if(argc < 3) {
+    fprintf(stderr, "Usage:\n./blaster src_file spec_file\n");
     exit(-1);
   }
 
   FILE* input = fopen(argv[1], "r");
   if(input == 0) {
-    perror("error while opening file");
+    perror("error while opening file source");
     exit(-1);
   }
 
   blast = fopen(argv[2], "r");
   if(blast == 0) {
-    perror("error while opening file");
+    perror("error while opening file spec");
     exit(-1);
   }
 
@@ -462,22 +529,46 @@ int main(int argc, char** argv) {
   if (yyparse() == 0) {
     ast* tmp  = ast_divide(parser_ast);
     if(!tmp) {
-      fprintf(stderr, "You must define SPEC on top of your blast file\n");
+      fprintf(stderr, "You must add '#define SPEC' on top of the spec file\n");
       exit(-1);
     }
     blast_ast = tmp->op.right->op.right;
     tmp->op.right = 0;
 
-    if(is_subtree(parser_ast, blast_ast)) printf("is subtree\n");
-    //print_ascii_tree(parser_ast);
-    //printf("\n\n\n");
-    //print_ascii_tree(blast_ast);
-    //sym_print(symbol_tab);
-    //printf("\n\n");
-    //gencode(parser_ast, symbol_tab);
-    //printf("\n\n\n");
-    //printf("\n\n\n");
-    //gencode(blast_ast, symbol_tab);
+    if(v)
+    {
+        printf("\nAuthors:\n\n");
+        printf("MOUSSAOUI Abderahmane (SDSC)\n");
+        printf("BEGRICHE MASSINISSA (SIRIS)");
+        printf("\n\n");
+    }
+    if(t)
+    {
+        sym_print(symbol_tab);
+        printf("\n\n");
+    }
+    if(a)
+    {
+        print_ascii_tree(parser_ast);
+        printf("\n\n");
+    }
+    if(o)
+    {
+
+      FILE *fp;
+      if((fp=freopen(strcat(o_flag_name,".c"), "w" ,stdout))==NULL) 
+      {
+        printf("Cannot open file.\n");
+        exit(-1);
+      }
+      gencode(parser_ast, symbol_tab);
+      fclose(fp);
+    }
+    else
+    {
+      gencode(parser_ast, symbol_tab);
+    }
+    //if(is_subtree(parser_ast, blast_ast)) printf("is subtree\n");
   }
 
   fclose(input);
@@ -485,7 +576,6 @@ int main(int argc, char** argv) {
   // Be clean.
   lex_free();
   ast_free(parser_ast);
-  //ast_free(blast_ast);
   sym_free(symbol_tab);
   return 0;
 }
