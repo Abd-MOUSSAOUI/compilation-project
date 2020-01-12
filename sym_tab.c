@@ -36,14 +36,19 @@ sym_tab* sym_search(sym_tab* tab, sym_type type, char* id, int num_func)
 {
     while (tab != NULL)
     {
+        if(type == INT_V && num_func == -1)
+        {
+            if((strcmp(tab->id, id) == 0))
+                return tab;
+        }
         if(type == FUNC)
             {
                 if((strcmp(tab->id, id) == 0) && tab->type == type)
                 return tab;
             }
-        if(tab->num_f == num_func)
+        if(tab->num_f == num_func || tab->num_f == -1)
         {
-            if(type == TAB_INT || type == INT_V || INT_F)
+            if(type == TAB_INT || type == INT_V || type == INT_F)
             {
                 if (strcmp(tab->id, id) == 0)
                 {
