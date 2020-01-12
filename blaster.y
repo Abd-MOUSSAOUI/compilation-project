@@ -293,7 +293,7 @@ for_st:
 
 print_stmt:
     PRINTF '(' STR ')' ';'   { if(!std_inc) {
-                                  fprintf(stderr, "implicitly declaring library function 'printf'");
+                                  fprintf(stderr, "implicitly declaring library function 'printf'\n");
                                   exit(1);
                                }
                                $$ = ast_new_operation(AST_PRINTF, ast_new_id($3), 0);
@@ -526,7 +526,7 @@ int main(int argc, char** argv) {
 
   yyin = input;
 
-  if (yyparse() == 0) 
+  if (yyparse() == 0)
   {
     ast* tmp  = ast_divide(parser_ast);
     if(!tmp) {
@@ -557,7 +557,7 @@ int main(int argc, char** argv) {
     }
 
     optimizer(parser_ast, blast_ast);
-    
+
     if(a)
     {
         print_ascii_tree(parser_ast);
@@ -574,7 +574,7 @@ int main(int argc, char** argv) {
         }
         gencode(parser_ast, symbol_tab);
         fclose(fp);
-    } 
+    }
     else
     {
         gencode(parser_ast, symbol_tab);
