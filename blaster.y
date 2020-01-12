@@ -487,7 +487,7 @@ func_call:
                           }
                           if (check_args_nbr(symbol_tab, $1, counter) != 1)
                           {
-                            fprintf(stderr, "ERROR: %s   Incorrect number of args\n",$1);
+                            fprintf(stderr, "ERROR: %s Incorrect number of args\n",$1);
                             exit(1);
                           }
                         }
