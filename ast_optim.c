@@ -122,7 +122,7 @@ ast* ast_first_for(ast* ast)
 
 ast* ast_replace(ast* ast1, ast* ast2) {
   ast* result;
-  if(!strcmp(ast2->left->id, "axpy")) {
+  if(!strcmp(ast2->left->id, "saxpy")) {
      ast *x, *a;
      ast* high = ast1->mid_l->right;
      ast* y    = ast1->right->left->left->left->left;
@@ -152,11 +152,52 @@ ast* ast_replace(ast* ast1, ast* ast2) {
      result = ast_new_operation(AST_ARG, x, result);
      result = ast_new_operation(AST_ARG, a, result);
      result = ast_new_operation(AST_ARG, high, result);
-     result = ast_new_operation(AST_CALL, ast_new_id("axpy"), result);
+     result = ast_new_operation(AST_CALL, ast_new_id("saxpy"), result);
      result = ast_new_operation(AST_EXPST, result, 0);
   }
 
-  if(!strcmp(ast2->left->id, "gemv")) {
+  if(!strcmp(ast2->left->id, "sscal")) {
+    ast* n = ast1->mid_l->right;
+    ast* a = ast1->right->left->left->right->left;
+    ast* x = ast1->right->left->left->left->left;
+
+    result = ast_new_operation(AST_ARG, ast_new_number(1), 0);
+    result = ast_new_operation(AST_ARG, x, result);
+    result = ast_new_operation(AST_ARG, a, result);
+    result = ast_new_operation(AST_ARG, n, result);
+    result = ast_new_operation(AST_CALL, ast_new_id("sscal"), result);
+    result = ast_new_operation(AST_EXPST, result, 0);
+  }
+
+  if(!strcmp(ast2->left->id, "scopy")) {
+    ast* n = ast1->mid_l->right;
+    ast* x = ast1->right->left->left->left->left;
+    ast* y = ast1->right->left->left->right->left;
+
+    result = ast_new_operation(AST_ARG, ast_new_number(1), 0);
+    result = ast_new_operation(AST_ARG, y, result);
+    result = ast_new_operation(AST_ARG, ast_new_number(1), result);
+    result = ast_new_operation(AST_ARG, x, result);
+    result = ast_new_operation(AST_ARG, n, result);
+    result = ast_new_operation(AST_CALL, ast_new_id("scopy"), result);
+    result = ast_new_operation(AST_EXPST, result, 0);
+  }
+
+  if(!strcmp(ast2->left->id, "sswap")) {
+    ast* n = ast1->mid_l->right;
+    ast* y = ast1->right->left->left->right->left;
+    ast* x = ast1->right->left->right->right->left->left->left;
+
+    result = ast_new_operation(AST_ARG, ast_new_number(1), 0);
+    result = ast_new_operation(AST_ARG, y, result);
+    result = ast_new_operation(AST_ARG, ast_new_number(1), result);
+    result = ast_new_operation(AST_ARG, x, result);
+    result = ast_new_operation(AST_ARG, n, result);
+    result = ast_new_operation(AST_CALL, ast_new_id("sswap"), result);
+    result = ast_new_operation(AST_EXPST, result, 0);
+  }
+
+  if(!strcmp(ast2->left->id, "sgemv")) {
     ast* beta;
     ast* m  = ast1->mid_l->right;
     ast* y  = ast1->right->left->right->left->left->left;
@@ -211,9 +252,39 @@ ast* ast_replace(ast* ast1, ast* ast2) {
     result = ast_new_operation(AST_ARG, n, result);
     result = ast_new_operation(AST_ARG, m, result);
     result = ast_new_operation(AST_ARG, ast_new_number(78), result);
-    result = ast_new_operation(AST_CALL, ast_new_id("gemv"), result);
+    result = ast_new_operation(AST_CALL, ast_new_id("sgemv"), result);
     result = ast_new_operation(AST_EXPST, result, 0);
   }
+
+  if(!strcmp(ast2->left->id, "sgemm")) {
+    ast* f2 = ast1->right->left;
+    ast* f3 = f2->right->left->right;
+    ast* l = ast1->mid_l->right;
+    ast* n = f2->mid_l->right;
+    ast* m = f3->mid_l->right;
+    ast* c = f2->right->left->left->left->left->left;
+    ast* beta = f2->right->left->left->left->right->left;
+    ast* a = f3->right->left->left->right->right->left->right->left;
+    ast* alpha = f3->right->left->left->right->right->left->left;
+    ast* b = f3->right->left->left->right->right->right->left;
+
+    result = ast_new_operation(AST_ARG, ast_new_number(1), 0);
+    result = ast_new_operation(AST_ARG, c, result);
+    result = ast_new_operation(AST_ARG, beta, result);
+    result = ast_new_operation(AST_ARG, ast_new_number(1), result);
+    result = ast_new_operation(AST_ARG, b, result);
+    result = ast_new_operation(AST_ARG, ast_new_number(1), result);
+    result = ast_new_operation(AST_ARG, a, result);
+    result = ast_new_operation(AST_ARG, alpha, result);
+    result = ast_new_operation(AST_ARG, m, result);
+    result = ast_new_operation(AST_ARG, n, result);
+    result = ast_new_operation(AST_ARG, l, result);
+    result = ast_new_operation(AST_ARG, ast_new_number(78), result);
+    result = ast_new_operation(AST_ARG, ast_new_number(78), result);
+    result = ast_new_operation(AST_CALL, ast_new_id("sgemm"), result);
+    result = ast_new_operation(AST_EXPST, result, 0);
+  }
+
   return result;
 }
 

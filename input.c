@@ -1,32 +1,16 @@
-#include <stdio.h>
-#define M 20
-#define N 10
-
-int main()
+int func(int l, int n, int m, int alpha, int a[][], int b[][], int beta, int c[][])
 {
   int i;
-  int ty[10];
-  int tx[22];
-
   int j;
-  int tmp[M];
-  int a[M][N];
+  int k;
 
-  int alpha = 31;
-  int beta = 97;
-
-
-  for (i = 4; i < 3; i++) {
-    ty[i] = 5 * tx[i] + ty[i];
-  }
-
-  for (i = 0; i < M; i++) {
-    for(j=0; j< N; j++) {
-      tmp[i] = alpha * a[i][j] * tx[i] + tmp[i];
+  for(i = 0; i < 40; i++) {
+    for(j = 0; j< 30; j++) {
+      c[i][j] = 15 * c[i][j];
+      for(k = 0; k< 20; k++) {
+        c[i][j] = c[i][j] + 75 * a[i][k]*b[k][j];
+      }
     }
-    ty[i] = beta * ty[i] + tmp[i];
   }
-
-
 return 0;
 }
