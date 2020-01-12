@@ -380,6 +380,7 @@ asciinode * build_ascii_tree_recursive(ast *t)
     if(t->left != NULL)
     {
       sprintf(node->label, "%s", " EXPST ");
+      node->lablen = strlen(node->label);
       node->left_child = build_ascii_tree_recursive(t->left);
       node->left_child->parent_dir = -1;
     }

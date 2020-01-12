@@ -1,25 +1,21 @@
-#include <stdio.h>
-#define N 16
-
-int main() {
-int i;
-int ty[N];
-int tx[N];
-for (i = 0; i < N/2; i++) {
-tx[i] = 1;
+void test1(int lo, int hi, int v1[], int v2[]) 
+{
+    int i;
+    for (i = lo; i < hi; i++) {
+    int tmp = v2[i];
+    v2[i] = v1[i];
+    v1[i] = tmp;
+  }
 }
-// for (i = N/2; i < N; i++) {
-// tx[i] = 2;
-// }
-// for (i = 0; i < N; i++) {
-// ty[i] = 2 * N + 1;
-// }
-// for (i = N/4; i < 3*N/4; i++) {
-// ty[i] = (N + 5) * tx[i] + ty[i];
-// }
-// for (i = 0; i < N; i++) {
-// printf("%d ", ty[i]);
-// }
-printf("\n");
-return 0;
+void test(int l, int h, int v[], int vx)
+{
+    int j;
+    for (j = l; j < h; j--) {
+      v[j] = vx;
+    }
+} 
+int main()
+{
+  int a = 23;
+  return 0;
 }

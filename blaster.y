@@ -554,23 +554,23 @@ int main(int argc, char** argv) {
     }
     if(o)
     {
-
-      FILE *fp;
-      if((fp=freopen(strcat(o_flag_name,".c"), "w" ,stdout))==NULL) 
-      {
-        printf("Cannot open file.\n");
-        exit(-1);
-      }
-      gencode(parser_ast, symbol_tab);
-      fclose(fp);
+        FILE *fp;
+        if((fp=freopen(strcat(o_flag_name,".c"), "w" ,stdout))==NULL) 
+        {
+          printf("Cannot open file.\n");
+          exit(-1);
+        }
+        gencode(parser_ast, symbol_tab);
+        fclose(fp);
     }
     else
     {
-      //gencode(parser_ast, symbol_tab);
+        //gencode(parser_ast, symbol_tab);
     }
-    //if(is_subtree(parser_ast, blast_ast->right->left)) printf("is subtree\n");
-    print_ascii_tree(blast_ast->right->left);
-    print_ascii_tree(parser_ast);
+
+    if(is_subtree(parser_ast, blast_ast->mid_r->left->right)) printf("is subtree\n");
+    //print_ascii_tree(parser_ast);
+    //print_ascii_tree(blast_ast->mid_r->left->right);
   }
 
   fclose(input);
